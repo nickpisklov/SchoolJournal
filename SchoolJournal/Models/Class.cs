@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
+namespace SchoolJournal.Data.Models
 namespace SchoolJournal
 {
     public partial class Class

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 
+namespace SchoolJournal.Data.Models
 namespace SchoolJournal
+
 {
     public partial class Teacher
     {
@@ -17,8 +19,8 @@ namespace SchoolJournal
         public string Surname { get; set; }
         public string Middlename { get; set; }
         public DateTime HireDate { get; set; }
-        public DateTime FireDate { get; set; }
+        public DateTime? FireDate { get; set; }
 
-        public virtual ICollection<Journal> Journals { get; set; }
+      public virtual ICollection<Journal> Journals { get; set; }
     }
 }

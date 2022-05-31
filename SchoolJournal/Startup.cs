@@ -23,6 +23,18 @@ namespace SchoolJournal
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
+          /*services.AddTransient<IAllClothing, ClothingRepository>();
+            services.AddTransient<IClothitgsCategory, CategoryRepository>();
+            services.AddTransient<IAllOrders, OrdersRepository>();
+            services.AddDbContext<ShopDB>(options => options.UseSqlServer(_confString.GetConnectionString("DefaultConnection")));
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddScoped(sp => ShopCart.GetCart(sp));*/
+            
+            services.AddRazorPages();
+            services.AddMvc();
+            services.AddMemoryCache();
+            services.AddSession();
             services.AddControllersWithViews();
         }
 
@@ -33,25 +45,23 @@ namespace SchoolJournal
             {
                 app.UseDeveloperExceptionPage();
             }
-            else
-            {
-                app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
-            }
-            app.UseHttpsRedirection();
-            app.UseStaticFiles();
-
+            app.UseStatusCodePages();
             app.UseRouting();
-
-            app.UseAuthorization();
-
+            app.UseStaticFiles();
+            app.UseSession();
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}");
+             /* endpoints.MapControllerRoute("categoryFilter", "Clothing/{action}/{category?}", defaults: new { Controller = "Clothing", action = "List" });*/
             });
+
+            /*
+            using (var scope = app.ApplicationServices.CreateScope())
+            {
+                ShopDB content = scope.ServiceProvider.GetRequiredService<ShopDB>();
+                DBObject.Initial(content);
+            }
+            */
         }
     }
 }
