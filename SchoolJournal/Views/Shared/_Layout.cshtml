@@ -1,0 +1,67 @@
+﻿<!DOCTYPE html>
+
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width" />
+        <title>@ViewBag.Title</title>
+        <link href="~/css/style.css" rel="stylesheet" type="text/css"/>
+    </head>
+
+        <header>
+            <a href="/" class="logo"><img src="/img/logo.png" ></a>
+            <div class="menuToggle" onclick="toggleMenu();"></div>
+            <ul class="navigator">
+                <li><a asp-controller="Home" asp-action="Index">На главную</a></li>
+                <li><a href="/Journal/List">Все журналы</a></li>
+                <li><a href="">Про нас</a></li>
+                <li><a href="">Контакты</a></li>
+                <li><a href="account.html">Аккаунт</a></li>
+            </ul>
+        </header>
+
+    <body>
+        @RenderBody()
+        <script src="~/js/bootstrap.min.js"></script>
+    </body>
+
+
+    <!--------------------footer-------------------->
+    <div class="footer">
+    <div class="container">
+        <div class="row">
+            <div class="footer-col-1">
+                <h3>Качай наши приложения</h3>
+                <p>Качай приложения для Android и ios</p>
+                <div class="app-logo">
+                    <a href=""><img src="/img/play-store.png"></a>
+                    <a href=""><img src="/img/app-store.png"></a>
+                </div>
+            </div>
+            <div class="footer-col-4">
+                <h3>Подписывайтесь на нас</h3>
+                <ul>
+                    <li>Facebook</li>
+                    <li>Instagram</li>
+                    <li>Twitter</li>
+                    <li>YouTube</li>
+                </ul>
+            </div>
+        </div>
+        <hr>
+        <p class="copyright"> Электронный журнал. Все права защищены</p>
+    </div>
+    <script>
+    window.addEventListener('scroll', function(){
+        const header = document.querySelector('header');
+        header.classList.toggle("sticky", window.scrollY > 0);
+    });
+    
+    function toggleMenu(){
+        const menuToggle = document.querySelector('.menuToggle');
+        const navigator = document.querySelector('.navigator');
+        menuToggle.classList.toggle('active');
+        navigator.classList.toggle('active');
+    }
+</script>
+</div>
+</html>
