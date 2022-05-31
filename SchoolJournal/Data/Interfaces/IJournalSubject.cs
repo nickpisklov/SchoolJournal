@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using SchoolJournal.Data.Models;
+using System.Collections.Generic;
 
 namespace SchoolJournal.Data.Interfaces
 {
-    interface IJournalSubject
+    public interface IJournalSubject
     {
         IEnumerable<Subject> AllSubjects { get; }
     }

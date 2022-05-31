@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using SchoolJournal.Data.Models;
+using System.Collections.Generic;
 
 namespace SchoolJournal.Data.Interfaces
 {

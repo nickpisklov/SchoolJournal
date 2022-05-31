@@ -1,4 +1,4 @@
-﻿namespace SchoolJournal
+﻿namespace SchoolJournal.Data.Models
 {
     public partial class Progress
     {

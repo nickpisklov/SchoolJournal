@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace SchoolJournal
+namespace SchoolJournal.Data.Models
 {
     public partial class LessonTime
     {
