@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 
 namespace SchoolJournal.Data.Models
+namespace SchoolJournal
+
 {
     public partial class Teacher
     {
@@ -19,6 +21,6 @@ namespace SchoolJournal.Data.Models
         public DateTime HireDate { get; set; }
         public DateTime? FireDate { get; set; }
 
-        public virtual ICollection<Journal> Journals { get; set; }
+      public virtual ICollection<Journal> Journals { get; set; }
     }
 }

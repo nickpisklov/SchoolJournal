@@ -1,0 +1,35 @@
+﻿@model SchoolJournal.Models.User
+@{
+    Layout = "_MainLayout";
+    ViewBag.Title = "Authorization";
+}
+    <div class="text-center" style="margin-top: 2%">
+        <form method="post">
+            <h3>Введіть ваші дані</h3>
+            @if (ViewBag.IsGuest == null)
+            {
+                <p></p>
+            }
+            else if (ViewBag.IsGuest == true)
+            {
+                <p class="text-danger"><b>Невірний логін або пароль!</b></p>
+            }
+            else if (ViewBag.IsGuest == false)
+            {
+                <p class="text-success"><b>Ви авторизувались! Ваш статус - @ViewBag.Status.</b></p>
+            }
+            <div>
+                <div class="row justify-content-center">
+                    <label asp-for="Login" inputLogin" class="sr-only">Логін</label>
+                    <input asp-for="Login" id="inputLogin" class="form-control col-3" placeholder="Логін" required autofocus />
+                </div>
+                <p></p>
+                <div class="row justify-content-center">
+                    <label asp-for="Password" for="inputPassword" class="sr-only">Пароль</label>
+                    <input asp-for="Password" id="inputPassword" class="form-control col-3" type = "password" placeholder="Пароль" required />
+                </div>
+                <p></p>
+                <button type="submit" class="btn btn-primary text-center" style="background-color: royalblue; border-color: royalblue">Увійти</button>
+            </div>
+        </form>
+    </div>

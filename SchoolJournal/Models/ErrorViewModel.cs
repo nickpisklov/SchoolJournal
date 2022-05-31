@@ -1,4 +1,4 @@
-﻿namespace SchoolJournal.Models
+namespace SchoolJournal.Models
 {
     public class ErrorViewModel
     {
