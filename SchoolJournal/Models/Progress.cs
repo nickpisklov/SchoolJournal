@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-#nullable disable
-
-namespace SchoolJournal
+﻿namespace SchoolJournal
 {
     public partial class Progress
     {
