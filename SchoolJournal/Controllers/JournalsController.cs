@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using SchoolJournal.Data.Interfaces;
+using SchoolJournal.Interfaces;
 
 namespace SchoolJournal.Controllers
 {

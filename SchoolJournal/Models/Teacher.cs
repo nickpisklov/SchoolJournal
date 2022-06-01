@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace SchoolJournal.Data.Models
-namespace SchoolJournal
-
+namespace SchoolJournal.Models
 {
     public partial class Teacher
     {

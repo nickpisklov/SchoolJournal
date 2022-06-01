@@ -1,7 +1,7 @@
-﻿using SchoolJournal.Data.Models;
+﻿using SchoolJournal.Models;
 using System.Collections.Generic;
 
-namespace SchoolJournal.Data.Interfaces
+namespace SchoolJournal.Interfaces
 {
     public interface IAllJournal
     {

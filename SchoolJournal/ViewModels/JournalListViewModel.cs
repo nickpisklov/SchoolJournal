@@ -1,4 +1,4 @@
-﻿using SchoolJournal.Data.Models;
+﻿using SchoolJournal.Models;
 using System.Collections.Generic;
 
 namespace SchoolJournal.ViewModels
