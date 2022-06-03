@@ -1,16 +1,21 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using SchoolJournal.Models;
+using System.Linq;
+using Microsoft.AspNetCore.Http;
+using System;
+using Newtonsoft.Json;
+using SchoolJournal.ViewModels;
 
 namespace SchoolJournal.Controllers
 {
     public class AuthorizationController : Controller
     {
-        private IConfiguration configuration;
+        private readonly SchoolJournalContext _db;
 
-        public AuthorizationController(IConfiguration configuration)
+        public AuthorizationController(SchoolJournalContext db) 
         {
-            this.configuration = configuration;
+            _db = db;
         }
 
         [HttpGet]
@@ -20,30 +25,39 @@ namespace SchoolJournal.Controllers
         }
         
         [HttpPost]
-        public ViewResult Index(User user)
+        public IActionResult Index(User user)
         {
-            bool isTeacher = user.TeacherStatusCheck(configuration);
-            bool IsStudent = user.StudentStatusCheck(configuration);
+            var teachers = _db.Teachers
+                .Where(t => t.Login == user.Login && t.Password == user.Password);
 
-            if (isTeacher == false && IsStudent == false)
+            var students = _db.Students
+                .Where(s => s.Login == user.Login && s.Password == user.Password);
+
+            if (teachers.FirstOrDefault() != null && students.FirstOrDefault() == null)
+            {                
+                ViewBag.IsGuest = false;
+                user.SetTeacherPropertiesFromDB(teachers);
+                HttpContext.Session.SetString("User", JsonConvert.SerializeObject(user));
+                return RedirectToAction("Home");
+            }
+            else if (teachers.FirstOrDefault() == null && students.FirstOrDefault() != null)
+            {
+                ViewBag.IsGuest = false;
+                user.SetStudentPropertiesFromDB(students);
+                HttpContext.Session.SetString("User", JsonConvert.SerializeObject(user));
+                return RedirectToAction("Home");
+            }
+            else
             {
                 ViewBag.IsGuest = true;
-                return View("Index", user);
+                return View();
             }
-            else if (isTeacher == true && IsStudent == false)
-            {
-                ViewBag.IsGuest = false;
-                ViewBag.Status = "'Вчитель'";
-                //Set fields by login
-                return View("Index", user);
-            }
-            else 
-            {
-                ViewBag.IsGuest = false;
-                ViewBag.Status = "'Учень'";
-                //Set fields by login
-                return View("Index", user);
-            }
+                       
+        }
+        public IActionResult Home()
+        {
+            var user = JsonConvert.DeserializeObject<User>(HttpContext.Session.GetString("User"));
+            return View();
         }
     }
 }
