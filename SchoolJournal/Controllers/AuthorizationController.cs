@@ -37,6 +37,7 @@ namespace SchoolJournal.Controllers
             {                
                 ViewBag.IsGuest = false;
                 user.SetTeacherPropertiesFromDB(teachers);
+                user.SetStatus(Status.Teacher);
                 HttpContext.Session.SetString("User", JsonConvert.SerializeObject(user));
                 return RedirectToAction("Home");
             }
@@ -44,6 +45,7 @@ namespace SchoolJournal.Controllers
             {
                 ViewBag.IsGuest = false;
                 user.SetStudentPropertiesFromDB(students);
+                user.SetStatus(Status.Student);
                 HttpContext.Session.SetString("User", JsonConvert.SerializeObject(user));
                 return RedirectToAction("Home");
             }
