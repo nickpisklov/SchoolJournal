@@ -61,7 +61,7 @@ namespace SchoolJournal
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllerRoute("default", "{controller=Authorization}/{action=Index}");
+                endpoints.MapControllerRoute("default", "{controller=Journal}/{action=Journal}");
              /* endpoints.MapControllerRoute("categoryFilter", "Clothing/{action}/{category?}", defaults: new { Controller = "Clothing", action = "List" });*/
             });
 
