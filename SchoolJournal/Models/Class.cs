@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace SchoolJournal.Models
 {
@@ -17,5 +18,10 @@ namespace SchoolJournal.Models
 
         public virtual ICollection<Journal> Journals { get; set; }
         public virtual ICollection<Student> Students { get; set; }
+
+        public static string GetClassTitleById(SchoolJournalContext db, int classId) 
+        {
+            return db.Classes.Where(c => c.Id == classId).Select(c => c.Title).FirstOrDefault().ToString();
+        }
     }
 }

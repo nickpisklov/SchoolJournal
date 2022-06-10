@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace SchoolJournal.Models
 {
@@ -19,5 +20,10 @@ namespace SchoolJournal.Models
 
         public virtual Class FkClassNavigation { get; set; }
         public virtual ICollection<Progress> Progresses { get; set; }
+
+        public static IQueryable<Student>GetStudentsByClass(SchoolJournalContext db, int classId) 
+        {
+            return db.Students.Where(s => s.FkClass == classId).OrderBy(s => s.Surname);
+        }
     }
 }
