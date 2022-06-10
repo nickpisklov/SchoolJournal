@@ -61,25 +61,34 @@
                 <th class="col-sm-1">Дата</th>
                 <th>Тема</th>
                 <th>Домашнє завдвння</th>
-                <th class="col-sm-1"></th>
+                @if (ViewBag.Status == Status.Teacher || ViewBag.Status == Status.Admin)
+                {
+                    <th class="col-sm-1"></th>
+                }               
             </tr>
         </thead>
-        @foreach (Lesson l in Model) 
-        {
-        <tr>
-            <td>
-                @l.LessonDate.ToString("dd.MM.yyyy")
-            </td>
-            <td>
-                @l.Theme
-            </td>
-            <td>
-                @l.Homework
-            </td>
-            <td class="text-center">
-                <a class="btn btn-dark btn-sm text-light">Редагувати</a>
-            </td>
-        </tr>
-        }
+        <tbody>
+            @foreach (Lesson l in Model) 
+            {
+            <tr>
+                <td>
+                    @l.LessonDate.ToString("dd.MM.yyyy")
+                </td>
+                <td>
+                    @l.Theme
+                </td>
+                <td>
+                    @l.Homework
+                </td>
+                @if (ViewBag.Status == Status.Teacher|| ViewBag.Status == Status.Admin)
+                {
+                    <td class="text-center">
+                        <a class="btn btn-dark btn-sm text-light">Редагувати</a>
+                    </td>
+                }
+
+            </tr>
+            }
+            </tbody>
     </table>
 </div>

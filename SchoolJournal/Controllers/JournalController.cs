@@ -31,6 +31,7 @@ namespace SchoolJournal.Controllers
             int classId = 1;
             int subjectId = 1;
             int schoolYearId = 2;
+            ViewBag.Status = Status.Student;
             //--------------------------------
             List<Lesson> lessons = Lesson.GetLessonsForClass(_db, classId, schoolYearId, subjectId, teacherId).ToList();
             List<Student> students = Student.GetStudentsByClass(_db, classId).ToList();
@@ -50,6 +51,11 @@ namespace SchoolJournal.Controllers
             ViewBag.SubjectTitle = Subject.GetSubjectTitleById(_db, subjectId);
             ViewBag.ClassTitle = Class.GetClassTitleById(_db, classId);
             return View(JournalPaging<Lesson>.Create(lessons, pageNumber ?? 1, 15));
+        }
+        public IActionResult EditLessonInfo() 
+        {
+
+            return View();
         }
     }
 }
