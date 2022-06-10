@@ -1,4 +1,4 @@
-﻿@model SchoolJournal.ViewModels.JournalPageList<Lesson>
+﻿@model SchoolJournal.ViewModels.JournalPaging<Lesson>
 @{
     Layout = "_MainLayout";
     ViewBag.Title = $"Журнал - {ViewBag.ClassTitle} {ViewBag.SubjectTitle}";
@@ -8,13 +8,13 @@
 }
 <div style="margin-top: 1%; margin-left: 1%; margin-right: 1%">
     <h5 class="text-center">@ViewBag.ClassTitle @ViewBag.SubjectTitle</h5>
-    <table class="table table-sm table-bordered border border-dark">
+    <table class="table table-sm table-bordered border border-dark" style="table-layout: auto;width:max-content">
         <thead>
             <tr class="text-center thead-dark">
-                <th style="width:18%;">Учні</th>
+                <th style="width:305px">Учні</th>
                 @foreach (Lesson l in Model)
                 {
-                    <th>@l.LessonDate.ToString("dd.MM")</th>
+                    <th style="width:80px">@l.LessonDate.ToString("dd.MM")</th>
                 }
             </tr>
         </thead>
@@ -29,7 +29,7 @@
                         var item = markForClass.FirstOrDefault(i => i.LessonDetails.Id == l.Id && i.StudentDetails.Id == s.Id);
                         if (item == null)
                         {
-                            <td class="text-center"></td>
+                            <td></td>
                         }
                         else
                         {

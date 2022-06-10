@@ -32,12 +32,10 @@ namespace SchoolJournal.Controllers
             int subjectId = 1;
             int schoolYearId = 2;
             //--------------------------------
-            List<Lesson> lessons = _db.Lessons.Where(l => l.FkClass == classId && l.FkSchoolYear == schoolYearId
-                && l.FkSubject == subjectId && l.FkTeacher == teacherId).ToList();
-            List<Student> students = _db.Students.Where(s => s.FkClass == classId).OrderBy(s => s.Surname).ToList();
+            List<Lesson> lessons = Lesson.GetLessonsForClass(_db, classId, schoolYearId, subjectId, teacherId).ToList();
+            List<Student> students = Student.GetStudentsByClass(_db, classId).ToList();
             List<Progress> progresses = _db.Progresses.ToList();
             List<Mark> marks = _db.Marks.ToList();
-
             ViewBag.MarksForClass = from p in progresses
                                 join l in lessons on p.FkLesson equals l.Id into table1
                                 from l in table1.DefaultIfEmpty()
@@ -49,11 +47,9 @@ namespace SchoolJournal.Controllers
                                 { StudentDetails = s, LessonDetails = l, ProgressDetails = p, MarkDetails = m };
             ViewBag.AllStudents = students;
             ViewBag.AllLessons = lessons;
-            ViewBag.SubjectTitle = _db.Subjects.Where(s => s.Id == subjectId)
-                .Select(s => s.Title).FirstOrDefault().ToString();
-            ViewBag.ClassTitle = _db.Classes.Where(c => c.Id == classId)
-                .Select(c => c.Title).FirstOrDefault().ToString();
-            return View(JournalPageList<Lesson>.Create(lessons, pageNumber ?? 1, 6));
+            ViewBag.SubjectTitle = Subject.GetSubjectTitleById(_db, subjectId);
+            ViewBag.ClassTitle = Class.GetClassTitleById(_db, classId);
+            return View(JournalPaging<Lesson>.Create(lessons, pageNumber ?? 1, 15));
         }
     }
 }
