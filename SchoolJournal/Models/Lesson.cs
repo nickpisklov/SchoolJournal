@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
 namespace SchoolJournal.Models
@@ -29,6 +30,10 @@ namespace SchoolJournal.Models
         {
             return db.Lessons.Where(l => l.FkClass == classId && l.FkSchoolYear == schoolYearId
                 && l.FkSubject == subjectId && l.FkTeacher == teacherId);
+        }
+        public static Lesson GetLessonById(SchoolJournalContext db, int lessonId) 
+        {
+            return db.Lessons.Where(l => l.Id == lessonId).FirstOrDefault();
         }
     }
 }
