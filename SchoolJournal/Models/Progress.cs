@@ -1,4 +1,6 @@
-﻿namespace SchoolJournal.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace SchoolJournal.Models
 {
     public partial class Progress
     {

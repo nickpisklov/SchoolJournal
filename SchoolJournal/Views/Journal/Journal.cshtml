@@ -29,11 +29,36 @@
                         var item = markForClass.FirstOrDefault(i => i.LessonDetails.Id == l.Id && i.StudentDetails.Id == s.Id);
                         if (item == null)
                         {
-                            <td></td>
+                            var parameters = new Dictionary<string, string>
+                            {
+                                {"lessonId", l.Id.ToString() },
+                                { "studentId", s.Id.ToString()},
+                                { "markId", 0.ToString()}
+
+                            };
+                            <td class="text-center">
+                                <a asp-action="EditMark" 
+                                   asp-all-route-data="parameters"
+                                   class="btn btn-light btn-block"style="height:38px">
+
+                                </a>
+                            </td>
                         }
                         else
                         {
-                            <td class="text-center">@item.MarkDetails.MarkValue</td>
+                            var parameters = new Dictionary<string, string>
+                            {
+                                {"lessonId", l.Id.ToString() },
+                                { "studentId", s.Id.ToString()},
+                                { "markId", @item.MarkDetails.Id.ToString()}
+
+                            };
+                            <td class="text-center">
+                                <a asp-action="EditMark"
+                                   asp-all-route-data="parameters"
+                                   class="btn btn-light btn-block"style="height:38px">@item.MarkDetails.MarkValue
+                                </a>
+                            </td>
                         }
                     }
                 </tr>

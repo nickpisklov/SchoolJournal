@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using SchoolJournal.Models;
 using SchoolJournal.ViewModels;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace SchoolJournal.Controllers
 {
@@ -52,6 +53,8 @@ namespace SchoolJournal.Controllers
             ViewBag.ClassTitle = Class.GetClassTitleById(_db, classId);
             return View(JournalPaging<Lesson>.Create(lessons, pageNumber ?? 1, 15));
         }
+
+
         [HttpGet]
         public IActionResult EditLessonInfo(int lessonId) 
         {
@@ -64,6 +67,57 @@ namespace SchoolJournal.Controllers
             _db.Entry(lesson).State = EntityState.Modified;
             _db.SaveChanges();
             return RedirectToAction("Journal");
+        }
+
+
+        [HttpGet]
+        public IActionResult EditMark(string lessonId, string studentId, string markId) 
+        {
+            List<Mark> marks = _db.Marks.ToList();
+            List<SelectListItem> selectListItems = new List<SelectListItem>();
+            foreach(Mark m in marks) 
+            {
+                selectListItems.Add(new SelectListItem { Value = m.Id.ToString(), Text = m.MarkValue});
+            }
+            Progress progress = _db.Progresses.Where(p => p.FkLesson == Convert.ToInt32(lessonId) && p.FkMark == Convert.ToInt32(markId)
+            && p.FkStudent == Convert.ToInt32(studentId)).FirstOrDefault();
+            if (progress == null) 
+            {
+                progress = new Progress()
+                {
+                    FkLesson = Convert.ToInt32(lessonId),
+                    FkStudent = Convert.ToInt32(studentId),
+                    FkMark = 1
+                };
+            }
+            ViewBag.Marks = selectListItems;
+            ViewBag.MarkId = Convert.ToInt32(markId);
+            ViewBag.Student = Student.GetStudentById(_db, Convert.ToInt32(studentId));
+            ViewBag.Lesson = Lesson.GetLessonById(_db, Convert.ToInt32(lessonId));
+            return View(progress);
+        }
+        [HttpPost]
+        public IActionResult EditMark(Progress progress) 
+        {
+            var toDelete = _db.Progresses.Where(p => p.FkLesson == progress.FkLesson && p.FkStudent == progress.FkStudent).FirstOrDefault();
+            if (toDelete == null) 
+            {
+                var student = _db.Students.Find(progress.FkStudent);
+                student.Progresses.Add(progress);
+                var lesson = _db.Lessons.Find(progress.FkLesson);
+                lesson.Progresses.Add(progress);
+                _db.Progresses.Add(progress);
+                _db.SaveChanges();
+                return RedirectToAction("Journal");
+            }
+            else 
+            {
+                _db.Progresses.Remove(toDelete);
+                _db.SaveChanges();
+                _db.Entry(progress).State = EntityState.Added;
+                _db.SaveChanges();
+                return RedirectToAction("Journal");
+            }   
         }
     }
 }

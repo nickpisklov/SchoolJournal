@@ -1,0 +1,24 @@
+﻿@model Progress
+@{
+    Layout = "_MainLayout";
+    ViewBag.Title = "Редагування відмітки";
+    Student student = ViewBag.Student;
+    Lesson lesson = ViewBag.Lesson;
+    List<SelectListItem> marks = ViewBag.Marks;
+    int currentMarkId = ViewBag.MarkId;
+}
+    <div class="ml-md-3">
+        <h3>
+            Редагування оцінки учня @student.Surname
+            @student.Name @student.Middlename за @lesson.LessonDate.ToString("dd.MM.yyyy")
+        </h3>
+        <form method="post">
+            @Html.HiddenFor(model => model.FkLesson)
+            @Html.HiddenFor(model => model.FkStudent)
+            <label>Оберіть оцінку</label><br />
+            @Html.DropDownListFor(model => model.FkMark, marks)<br />
+            <input type="submit" value="Зберегти" class="btn btn-dark text-center mt-md-3" />
+        </form>
+    </div>
+
+
