@@ -8,6 +8,9 @@ using Microsoft.EntityFrameworkCore;
 using SchoolJournal.Models;
 using SchoolJournal.ViewModels;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Session;
+using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json;
 
 namespace SchoolJournal.Controllers
 {
@@ -51,9 +54,9 @@ namespace SchoolJournal.Controllers
             ViewBag.AllLessons = lessons;
             ViewBag.SubjectTitle = Subject.GetSubjectTitleById(_db, subjectId);
             ViewBag.ClassTitle = Class.GetClassTitleById(_db, classId);
+            HttpContext.Session.SetInt32("pageNumber", pageNumber ?? 1);
             return View(JournalPaging<Lesson>.Create(lessons, pageNumber ?? 1, 15));
         }
-
 
         [HttpGet]
         public IActionResult EditLessonInfo(int lessonId) 
@@ -66,29 +69,23 @@ namespace SchoolJournal.Controllers
         {
             _db.Entry(lesson).State = EntityState.Modified;
             _db.SaveChanges();
-            return RedirectToAction("Journal");
+            return RedirectToRoute(new { action = "Journal", controller = "Journal", pageNumber = HttpContext.Session.GetInt32("pageNumber") }); ;
         }
-
 
         [HttpGet]
         public IActionResult EditMark(string lessonId, string studentId, string markId) 
         {
             List<Mark> marks = _db.Marks.ToList();
             List<SelectListItem> selectListItems = new List<SelectListItem>();
+            selectListItems.Add(new SelectListItem { Text = "Оберіть оцінку", Value = "0" });
             foreach(Mark m in marks) 
             {
                 selectListItems.Add(new SelectListItem { Value = m.Id.ToString(), Text = m.MarkValue});
             }
-            Progress progress = _db.Progresses.Where(p => p.FkLesson == Convert.ToInt32(lessonId) && p.FkMark == Convert.ToInt32(markId)
-            && p.FkStudent == Convert.ToInt32(studentId)).FirstOrDefault();
+            Progress progress = Progress.GetProgressByStudentAndLessonId(_db, Convert.ToInt32(studentId), Convert.ToInt32(lessonId));
             if (progress == null) 
             {
-                progress = new Progress()
-                {
-                    FkLesson = Convert.ToInt32(lessonId),
-                    FkStudent = Convert.ToInt32(studentId),
-                    FkMark = 1
-                };
+                progress = new Progress(Convert.ToInt32(lessonId), Convert.ToInt32(studentId));
             }
             ViewBag.Marks = selectListItems;
             ViewBag.MarkId = Convert.ToInt32(markId);
@@ -99,25 +96,37 @@ namespace SchoolJournal.Controllers
         [HttpPost]
         public IActionResult EditMark(Progress progress) 
         {
-            var toDelete = _db.Progresses.Where(p => p.FkLesson == progress.FkLesson && p.FkStudent == progress.FkStudent).FirstOrDefault();
-            if (toDelete == null) 
+            var progressCheck = Progress.GetProgressByStudentAndLessonId(_db, progress.FkStudent, progress.FkLesson);
+            if (progress.FkMark.ToString() == "0")
             {
-                var student = _db.Students.Find(progress.FkStudent);
-                student.Progresses.Add(progress);
-                var lesson = _db.Lessons.Find(progress.FkLesson);
-                lesson.Progresses.Add(progress);
-                _db.Progresses.Add(progress);
-                _db.SaveChanges();
-                return RedirectToAction("Journal");
+                return RedirectToRoute(new { action = "Journal", controller = "Journal", pageNumber = HttpContext.Session.GetInt32("pageNumber") });
+            }
+            else if (progressCheck == null) 
+            {
+                progress.AddToDbWithDependencies(_db, progress);
+                return RedirectToRoute(new { action = "Journal", controller = "Journal", pageNumber = HttpContext.Session.GetInt32("pageNumber") });        
+            }
+            else
+            {
+                progress.ModifyDbRecord(_db, progress, progressCheck);
+                return RedirectToRoute(new { action = "Journal", controller = "Journal", pageNumber = HttpContext.Session.GetInt32("pageNumber") });
+            }   
+        }
+
+        [HttpPost]
+        public IActionResult DeleteMark(Progress progress) 
+        {
+            var newProgress = Progress.GetProgressByStudentAndLessonId(_db, progress.FkStudent, progress.FkLesson);
+            if (newProgress == null)
+            {
+                return RedirectToRoute(new { action = "Journal", controller = "Journal", pageNumber = HttpContext.Session.GetInt32("pageNumber") });
             }
             else 
             {
-                _db.Progresses.Remove(toDelete);
+                _db.Progresses.Remove(newProgress);
                 _db.SaveChanges();
-                _db.Entry(progress).State = EntityState.Added;
-                _db.SaveChanges();
-                return RedirectToAction("Journal");
-            }   
+                return RedirectToRoute(new { action = "Journal", controller = "Journal", pageNumber = HttpContext.Session.GetInt32("pageNumber") });
+            }
         }
     }
 }
