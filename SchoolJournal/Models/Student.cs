@@ -25,5 +25,9 @@ namespace SchoolJournal.Models
         {
             return db.Students.Where(s => s.FkClass == classId).OrderBy(s => s.Surname);
         }
+        public static Student GetStudentById(SchoolJournalContext db, int id) 
+        {
+            return db.Students.Where(s => s.Id == id).FirstOrDefault();
+        }
     }
 }
