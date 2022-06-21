@@ -27,34 +27,29 @@ namespace SchoolJournal.Controllers
         [HttpPost]
         public IActionResult Index(User user)
         {
-            var teachers = _db.Teachers
-                .Where(t => t.Login == user.Login && t.Password == user.Password);
-
-            var students = _db.Students
-                .Where(s => s.Login == user.Login && s.Password == user.Password);
-
-            if (teachers.FirstOrDefault() != null && students.FirstOrDefault() == null)
-            {                
-                ViewBag.IsGuest = false;
-                user.SetTeacherPropertiesFromDB(teachers);
-                user.SetStatus(Status.Teacher);
+            if (user.GetUserStatusByLoginAndPassword(_db) == Status.Teacher)
+            {
+                user.SetTeacherPropertiesFromDB(Teacher.GetTeacherByLogin(_db, user.Login));
                 HttpContext.Session.SetString("User", JsonConvert.SerializeObject(user));
                 return RedirectToAction("Home");
             }
-            else if (teachers.FirstOrDefault() == null && students.FirstOrDefault() != null)
+            else if (user.GetUserStatusByLoginAndPassword(_db) == Status.Student)
             {
-                ViewBag.IsGuest = false;
-                user.SetStudentPropertiesFromDB(students);
-                user.SetStatus(Status.Student);
+                user.SetStudentPropertiesFromDB(Student.GetStudentByLogin(_db, user.Login));
                 HttpContext.Session.SetString("User", JsonConvert.SerializeObject(user));
                 return RedirectToAction("Home");
+            }
+            else if (user.GetUserStatusByLoginAndPassword(_db) == Status.Admin) 
+            {
+                user.SetAdminPropertiesFromDB(Admin.GetAdminByLogin(_db, user.Login));
+                HttpContext.Session.SetString("User", JsonConvert.SerializeObject(user));
+                return RedirectToAction("HomeAdministration", "Administration");
             }
             else
             {
                 ViewBag.IsGuest = true;
                 return View();
-            }
-                       
+            }                    
         }
         public IActionResult Home()
         {
