@@ -1,0 +1,71 @@
+﻿@model Student
+@{
+    Layout = "_MainLayout";
+    ViewBag.Title = "Додати учня";
+    List<SelectListItem> fkClasses = ViewBag.ClassesSelect;
+}
+<form method="post">
+    @if (ViewBag.Message == null)
+    {
+
+    }
+    else if (ViewBag.Message == "Невірно обраний клас!" || ViewBag.Message == "Такий логін вже існує!")
+    {
+        <div class="text-center mb-3">
+            <b class="text-danger">@ViewBag.Message</b>
+        </div>
+    }
+    else
+    {
+        <div class="text-center mb-3">
+            <b class="text-success">@ViewBag.Message</b>
+        </div>
+    }
+    <div class="row justify-content-center mt-3">
+        <label asp-for="FkClass" class="mr-3">Оберіть клас</label>
+    </div>
+
+    <div class="row justify-content-center">
+        @Html.DropDownListFor(model => model.FkClass, fkClasses, new { @class = "form-control col-sm-2" })
+    </div>
+
+    <div class="row justify-content-center mt-3">
+        <label asp-for="Login" class="mr-3">Логін</label>
+    </div>
+    <div class="row justify-content-center">
+        <input asp-for="Login" class="form-control col-3" required />
+    </div>
+
+    <div class="row justify-content-center mt-3">
+        <label asp-for="Password" class="mr-3">Пароль</label>
+    </div>
+    <div class="row justify-content-center">
+        <input asp-for="Password" class="form-control col-3" required />
+    </div>
+
+    <div class="row justify-content-center mt-3">
+        <label asp-for="Surname" class="mr-3">Прізвище</label>
+    </div>
+    <div class="row justify-content-center">
+        <input asp-for="Surname" class="form-control col-3" required />
+    </div>
+
+    <div class="row justify-content-center mt-3">
+        <label asp-for="Name" class="mr-3">Ім'я</label>
+    </div>
+    <div class="row justify-content-center">
+        <input asp-for="Name" class="form-control col-3" required />
+    </div>
+
+    <div class="row justify-content-center mt-3">
+        <label asp-for="Middlename" class="mr-3">По батькові</label>
+    </div>
+    <div class="row justify-content-center">
+        <input asp-for="Middlename" class="form-control col-3" required />
+    </div>
+    <div class="row justify-content-center mt-3">
+        <input asp-action="AddStudent" type="submit" value="Додати учня" class="btn btn-dark text-center mr-3" />
+        <a asp-action="HomeAdministration" class="btn btn-dark text-center">Повернутись на сторінку адміністратора</a>
+    </div>
+</form>
+
