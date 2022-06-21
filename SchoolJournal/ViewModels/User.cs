@@ -30,22 +30,53 @@ namespace SchoolJournal.ViewModels
 
         public User() { }
 
-        public void SetStudentPropertiesFromDB(IQueryable<Student> students)
+        public Status GetUserStatusByLoginAndPassword(SchoolJournalContext db) 
         {
-            Id = Convert.ToInt32(students.FirstOrDefault().Id);
-            Name = Convert.ToString(students.FirstOrDefault().Name);
-            Surname = Convert.ToString(students.FirstOrDefault().Surname);
-            Middlename = Convert.ToString(students.FirstOrDefault().Middlename);
-            Class = Convert.ToInt32(students.FirstOrDefault().FkClass);
+            var teacher = db.Teachers.Where(t => t.Login == Login && t.Password == Password).FirstOrDefault();
+            var student = db.Students.Where(s => s.Login == Login && s.Password == Password).FirstOrDefault();
+            var admin = db.Admins.Where(a => a.Login == Login && a.Password == Password).FirstOrDefault();
+            if (admin == null && teacher == null && student != null)
+            {
+                return Status.Student;
+            }
+            else if (admin == null && teacher != null && student == null)
+            {
+                return Status.Teacher;
+            }
+            else if (admin != null && teacher == null && student == null)
+            {
+                return Status.Admin;
+            }
+            else 
+            {
+                return Status.Guest;
+            }
         }
-        public void SetTeacherPropertiesFromDB(IQueryable<Teacher> teachers)
+        public void SetStudentPropertiesFromDB(Student student)
         {
-            Id = Convert.ToInt32(teachers.FirstOrDefault().Id);
-            Name = Convert.ToString(teachers.FirstOrDefault().Name);
-            Surname = Convert.ToString(teachers.FirstOrDefault().Surname);
-            Middlename = Convert.ToString(teachers.FirstOrDefault().Middlename);
-            HireDate = Convert.ToDateTime(teachers.FirstOrDefault().HireDate);
-            FireDate = Convert.ToDateTime(teachers.FirstOrDefault().FireDate);
+            Id = Convert.ToInt32(student.Id);
+            Name = Convert.ToString(student.Name);
+            Surname = Convert.ToString(student.Surname);
+            Middlename = Convert.ToString(student.Middlename);
+            Class = Convert.ToInt32(student.FkClass);
+            SetStatus(Status.Student);
+        }
+        public void SetTeacherPropertiesFromDB(Teacher teacher)
+        {
+            Id = Convert.ToInt32(teacher.Id);
+            Name = Convert.ToString(teacher.Name);
+            Surname = Convert.ToString(teacher.Surname);
+            Middlename = Convert.ToString(teacher.Middlename);
+            HireDate = Convert.ToDateTime(teacher.HireDate);
+            FireDate = Convert.ToDateTime(teacher.FireDate);
+            SetStatus(Status.Teacher);
+        }
+        public void SetAdminPropertiesFromDB(Admin admin) 
+        {
+            Id = Convert.ToInt32(admin.Id);
+            Name = Convert.ToString(admin.Login);
+            Surname = Convert.ToString(admin.Password);
+            SetStatus(Status.Admin);
         }
         public Status GetStatus()
         {

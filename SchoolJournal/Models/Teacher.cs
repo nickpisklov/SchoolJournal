@@ -34,5 +34,9 @@ namespace SchoolJournal.Models
                 return true;
             }
         }
+        public static Teacher GetTeacherByLogin(SchoolJournalContext db, string login)
+        {
+            return db.Teachers.Where(s => s.Login == login).FirstOrDefault();
+        }
     }
 }
