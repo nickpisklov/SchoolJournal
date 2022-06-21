@@ -29,5 +29,24 @@ namespace SchoolJournal.Models
         {
             return db.Students.Where(s => s.Id == id).FirstOrDefault();
         }
+        public void AddStudentWithDependencies(SchoolJournalContext db, Student newStudent) 
+        {
+            var classDependencies = db.Classes.Find(newStudent.FkClass);
+            classDependencies.Students.Add(newStudent);
+            db.Students.Add(newStudent);
+            db.SaveChanges();
+        }
+        public bool IsLoginEcxist(SchoolJournalContext db, Student newStudent) 
+        {
+            var student = db.Students.Where(s => s.Login == newStudent.Login).FirstOrDefault();
+            if (student == null)
+            {
+                return false;
+            }
+            else 
+            {
+                return true;
+            }
+        }
     }
 }

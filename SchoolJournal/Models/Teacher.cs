@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace SchoolJournal.Models
 {
@@ -19,6 +20,19 @@ namespace SchoolJournal.Models
         public DateTime HireDate { get; set; }
         public DateTime? FireDate { get; set; }
 
-      public virtual ICollection<Journal> Journals { get; set; }
+        public virtual ICollection<Journal> Journals { get; set; }
+
+        public bool IsLoginEcxist(SchoolJournalContext db, Teacher teacher)
+        {
+            var t = db.Teachers.Where(s => s.Login == teacher.Login).FirstOrDefault();
+            if (t == null)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
     }
 }
