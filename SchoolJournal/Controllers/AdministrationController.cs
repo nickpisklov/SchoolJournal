@@ -25,7 +25,7 @@ namespace SchoolJournal.Controllers
         }
 
         [HttpGet]
-        public IActionResult AddStudent() 
+        public IActionResult AddStudent()
         {
             var fkClasses = Class.GetFkClassSelectList(_db);
             ViewBag.ClassesSelect = fkClasses;
@@ -34,55 +34,56 @@ namespace SchoolJournal.Controllers
         [HttpPost]
         public IActionResult AddStudent(Student newStudent)
         {
+            var fkClasses = Class.GetFkClassSelectList(_db);
+            ViewBag.ClassesSelect = fkClasses;
             if (newStudent.FkClass.ToString() == "0")
-            {
-                var fkClasses = Class.GetFkClassSelectList(_db);
-                ViewBag.ClassesSelect = fkClasses;
+            {               
                 ViewBag.Message = "Невірно обраний клас!";
                 return View();
             }
-            else if (newStudent.IsLoginEcxist(_db, newStudent)) 
+            else if (newStudent.IsLoginEcxist(_db))
             {
-                var fkClasses = Class.GetFkClassSelectList(_db);
-                ViewBag.ClassesSelect = fkClasses;
                 ViewBag.Message = "Такий логін вже існує!";
                 return View();
             }
             else
             {
-                newStudent.AddStudentWithDependencies(_db, newStudent);
-                var fkClasses = Class.GetFkClassSelectList(_db);
-                ViewBag.ClassesSelect = fkClasses;
+                newStudent.AddStudentWithDependencies(_db);
                 ViewBag.Message = "Ви вдало додали учня!";
                 return View();
-            }    
+            }
         }
 
         [HttpGet]
-        public IActionResult AddClass() 
+        public IActionResult AddClass()
         {
             return View();
         }
         [HttpPost]
         public IActionResult AddClass(Class newClass)
         {
-            if (newClass.Title.Length <= 4)
+            if (newClass.IsClassExists(_db))
+            {
+                ViewBag.Message = "Такий клас вже існує!";
+                return View();
+            }
+            else if (newClass.Title.Length <= 4)
             {
                 ViewBag.Message = "Ви вдало додали клас!";
                 _db.Classes.Add(newClass);
                 _db.SaveChanges();
                 return View();
             }
-            else 
+            else
             {
                 ViewBag.Message = "Ви невірно ввели назву класу! Як приклад назва має бути наприклад така - 12-Б";
                 return View();
             }
-            
+
         }
 
         [HttpGet]
-        public IActionResult AddTeacher() 
+        public IActionResult AddTeacher()
         {
             return View();
         }
@@ -94,7 +95,7 @@ namespace SchoolJournal.Controllers
                 ViewBag.Message = "Невірна дата прийому на роботу! Дата повинна бути менша за теперешню.";
                 return View();
             }
-            else if (newTeacher.IsLoginEcxist(_db, newTeacher)) 
+            else if (newTeacher.IsLoginEcxist(_db))
             {
                 ViewBag.Message = "Такий логін вже існує!";
                 return View();
@@ -105,7 +106,35 @@ namespace SchoolJournal.Controllers
                 _db.SaveChanges();
                 ViewBag.Message = "Ви вдало додали вчителя!";
                 return View();
-            }          
+            }
+        }
+
+        [HttpGet]
+        public IActionResult AddJournal()
+        {
+            ViewBag.FK_Classes = Class.GetFkClassSelectList(_db);
+            ViewBag.FK_SchoolYears = SchoolYear.GetFkSchoolYearsSelectList(_db);
+            ViewBag.FK_Teachers = Teacher.GetFkTeachersSelectList(_db);
+            ViewBag.FK_Subjects = Subject.GetFkSubjectsSelectList(_db);
+            return View();
+        }
+        [HttpPost]
+        public IActionResult AddJournal(Journal newJournal) 
+        {
+            ViewBag.FK_Classes = Class.GetFkClassSelectList(_db);
+            ViewBag.FK_SchoolYears = SchoolYear.GetFkSchoolYearsSelectList(_db);
+            ViewBag.FK_Teachers = Teacher.GetFkTeachersSelectList(_db);
+            ViewBag.FK_Subjects = Subject.GetFkSubjectsSelectList(_db);
+            if (newJournal.IsJournalExists(_db))
+            {
+                ViewBag.Message = "Такий журнал вже існує!";
+            }
+            else 
+            {
+                newJournal.AddJournalWithDependencies(_db);
+                ViewBag.Message = "Ви вдало додали журнал!";
+            }        
+            return View();
         }
     }
 }

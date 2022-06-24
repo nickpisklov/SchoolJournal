@@ -10,6 +10,12 @@
             <b class="text-danger">@ViewBag.Message</b>
         </div>
     }
+    else if (ViewBag.Message == "Такий клас вже існує!")
+    {
+        <div class="text-center mb-3">
+            <b class="text-danger">@ViewBag.Message</b>
+        </div>
+    }
     else
     {
         <div class="text-center mb-3">

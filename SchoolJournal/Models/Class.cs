@@ -35,5 +35,17 @@ namespace SchoolJournal.Models
             }
             return fkClasses;
         }
+        public bool IsClassExists(SchoolJournalContext db)
+        {
+            var clas = db.Classes.Where(c => c.Title == Title && c.RecruitmentDate == RecruitmentDate);
+            if (clas == null) 
+            {
+                return false;
+            }
+            else 
+            {
+                return true;
+            }
+        }
     }
 }

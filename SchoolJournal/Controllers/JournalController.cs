@@ -41,13 +41,15 @@ namespace SchoolJournal.Controllers
             List<Student> students = Student.GetStudentsByClass(_db, classId).ToList();
             List<Progress> progresses = _db.Progresses.ToList();
             List<Mark> marks = _db.Marks.ToList();
+            
             ViewBag.MarksForClass = from p in progresses
-                                join l in lessons on p.FkLesson equals l.Id into table1
-                                from l in table1.DefaultIfEmpty()
-                                join s in students on p.FkStudent equals s.Id into table2
-                                from s in table2.DefaultIfEmpty()
-                                join m in marks on p.FkMark equals m.Id into table3
-                                from m in table3.DefaultIfEmpty()
+                                join l in lessons on p.FkLesson equals l.Id 
+                                join s in students on p.FkStudent equals s.Id 
+                                join m in marks on p.FkMark equals m.Id  
+                                where l.FkClass == classId 
+                                where l.FkSchoolYear == schoolYearId
+                                where l.FkTeacher == teacherId 
+                                where l.FkSubject == subjectId
                                 select new JournalPageContent 
                                 { StudentDetails = s, LessonDetails = l, ProgressDetails = p, MarkDetails = m };
             ViewBag.AllStudents = students;

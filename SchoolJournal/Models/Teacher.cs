@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -22,10 +23,12 @@ namespace SchoolJournal.Models
 
         public virtual ICollection<Journal> Journals { get; set; }
 
-        public bool IsLoginEcxist(SchoolJournalContext db, Teacher teacher)
+        public bool IsLoginEcxist(SchoolJournalContext db)
         {
-            var t = db.Teachers.Where(s => s.Login == teacher.Login).FirstOrDefault();
-            if (t == null)
+            var t = db.Teachers.Where(t => t.Login == Login).FirstOrDefault();
+            var s = db.Students.Where(s => s.Login == Login).FirstOrDefault();
+            var a = db.Admins.Where(a => a.Login == Login).FirstOrDefault();
+            if (t == null && s == null && a == null)
             {
                 return false;
             }
@@ -37,6 +40,18 @@ namespace SchoolJournal.Models
         public static Teacher GetTeacherByLogin(SchoolJournalContext db, string login)
         {
             return db.Teachers.Where(s => s.Login == login).FirstOrDefault();
+        }
+        public static List<SelectListItem> GetFkTeachersSelectList(SchoolJournalContext db) 
+        {
+            var teachers = db.Teachers.Where(t => t.FireDate == null);
+            List<SelectListItem> fkTeachers = new List<SelectListItem>();
+            fkTeachers.Add(new SelectListItem { Value = "Вчитель не обран", Text = "Оберіть вчителя" });
+            foreach (Teacher t in teachers)
+            {
+                fkTeachers.Add(new SelectListItem
+                { Value = t.Id.ToString(), Text = $"{t.Surname} {t.Name} {t.Middlename}" });
+            }
+            return fkTeachers;
         }
     }
 }
