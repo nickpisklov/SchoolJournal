@@ -25,17 +25,19 @@ namespace SchoolJournal.Models
         {
             return db.Students.Where(s => s.FkClass == classId).OrderBy(s => s.Surname);
         }
-        public void AddStudentWithDependencies(SchoolJournalContext db, Student newStudent) 
+        public void AddStudentWithDependencies(SchoolJournalContext db) 
         {
-            var classDependencies = db.Classes.Find(newStudent.FkClass);
-            classDependencies.Students.Add(newStudent);
-            db.Students.Add(newStudent);
+            var classDependencies = db.Classes.Find(FkClass);
+            classDependencies.Students.Add(this);
+            db.Students.Add(this);
             db.SaveChanges();
         }
-        public bool IsLoginEcxist(SchoolJournalContext db, Student newStudent) 
+        public bool IsLoginEcxist(SchoolJournalContext db) 
         {
-            var student = db.Students.Where(s => s.Login == newStudent.Login).FirstOrDefault();
-            if (student == null)
+            var t = db.Teachers.Where(t => t.Login == Login).FirstOrDefault();
+            var s = db.Students.Where(s => s.Login == Login).FirstOrDefault();
+            var a = db.Admins.Where(a => a.Login == Login).FirstOrDefault();
+            if (t == null && s == null && a == null)
             {
                 return false;
             }

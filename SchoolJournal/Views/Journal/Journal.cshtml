@@ -4,10 +4,11 @@
     ViewBag.Title = $"Журнал - {ViewBag.ClassTitle} {ViewBag.SubjectTitle}";
     var students = ViewBag.AllStudents;
     var lessons = ViewBag.AllLessons;
-    IEnumerable<SchoolJournal.ViewModels.JournalPageContent> markForClass = ViewBag.MarksForClass;
+    IEnumerable<JournalPageContent> markForClass = ViewBag.MarksForClass;
 }
+
+<h5 class="text-center mt-3">@ViewBag.ClassTitle @ViewBag.SubjectTitle</h5>
 <div style="margin-top: 1%; margin-left: 1%; margin-right: 1%">
-    <h5 class="text-center">@ViewBag.ClassTitle @ViewBag.SubjectTitle</h5>
     <table class="table table-sm table-bordered border border-dark" style="table-layout: auto;width:max-content">
         <thead>
             <tr class="text-center thead-dark">
@@ -23,14 +24,14 @@
             @foreach (Student s in students)
             {
                 <tr>
-                    <td>@s.Surname @s.Name @s.Middlename</td>
+                    <td class="pt-2">@s.Surname @s.Name @s.Middlename</td>
                     @foreach (Lesson l in Model)
                     {
                         var item = markForClass.FirstOrDefault(i => i.LessonDetails.Id == l.Id && i.StudentDetails.Id == s.Id);
                         if (item == null)
                         {
                             var parameters = new Dictionary<string, string>
-                            {
+                                            {
                                 {"lessonId", l.Id.ToString() },
                                 { "studentId", s.Id.ToString()},
                                 { "markId", 0.ToString()}
@@ -39,20 +40,20 @@
                             <td class="text-center">
                                 @if (Status.Teacher.Equals(ViewBag.Status))
                                 {
-                                    <a asp-action="EditMark" 
+                                    <a asp-action="EditMark"
                                        asp-all-route-data="parameters" class="btn btn-light btn-block" style="height:38px">
                                     </a>
                                 }
-                                else 
+                                else
                                 {
-                                    <a class="btn btn-light btn-block"style="height:38px"></a>
+                                    <a class="btn btn-light btn-block" style="height:38px"></a>
                                 }
                             </td>
                         }
                         else
                         {
                             var parameters = new Dictionary<string, string>
-                            {
+                                            {
                                 {"lessonId", l.Id.ToString() },
                                 { "studentId", s.Id.ToString()},
                                 { "markId", item.MarkDetails.Id.ToString()}
@@ -62,14 +63,14 @@
                                 @if (Status.Teacher.Equals(ViewBag.Status))
                                 {
                                     <a asp-action="EditMark"
-                                   asp-all-route-data="parameters" class="btn btn-light btn-block"style="height:38px">
-                                    @item.MarkDetails.MarkValue
+                                       asp-all-route-data="parameters" class="btn btn-light btn-block" style="height:38px">
+                                        @item.MarkDetails.MarkValue
                                     </a>
                                 }
-                                else 
+                                else
                                 {
-                                    <a class="btn btn-light btn-block"style="height:38px">
-                                    @item.MarkDetails.MarkValue
+                                    <a class="btn btn-light btn-block" style="height:38px">
+                                        @item.MarkDetails.MarkValue
                                     </a>
                                 }
                             </td>
@@ -84,11 +85,11 @@
         var nextDisabled = !Model.HasNextPage ? "disabled" : "";
     }
     <p>
-        <a asp-action="Journal" 
+        <a asp-action="Journal"
            asp-route-pageNumber="@(Model.PageIndex - 1)"
            class="btn btn-dark btn-sm @prevDisabled">Попередня сторінка</a>
 
-        <a asp-action="Journal" 
+        <a asp-action="Journal"
            asp-route-pageNumber="@(Model.PageIndex + 1)"
            class="btn btn-dark btn-sm @nextDisabled">Наступна сторінка</a>
     </p>
@@ -103,31 +104,33 @@
                 @if (Status.Teacher.Equals(ViewBag.Status) || Status.Admin.Equals(ViewBag.Status))
                 {
                     <th class="col-sm-1"></th>
-                }               
+                }
             </tr>
         </thead>
         <tbody>
-            @foreach (Lesson l in Model) 
+            @foreach (Lesson l in Model)
             {
-            <tr>
-                <td>
-                    @l.LessonDate.ToString("dd.MM.yyyy")
-                </td>
-                <td>
-                    @l.Theme
-                </td>
-                <td>
-                    @l.Homework
-                </td>
-                @if (Status.Teacher.Equals(ViewBag.Status) || Status.Admin.Equals(ViewBag.Status))
-                {
-                    <td class="text-center">
-                        <a asp-action="EditLessonInfo" asp-route-lessonId="@l.Id" class="btn btn-dark btn-sm text-light">Редагувати</a>
+                <tr>
+                    <td>
+                        @l.LessonDate.ToString("dd.MM.yyyy")
                     </td>
-                }
+                    <td>
+                        @l.Theme
+                    </td>
+                    <td>
+                        @l.Homework
+                    </td>
+                    @if (Status.Teacher.Equals(ViewBag.Status) || Status.Admin.Equals(ViewBag.Status))
+                    {
+                        <td class="text-center">
+                            <a asp-action="EditLessonInfo" asp-route-lessonId="@l.Id" class="btn btn-dark btn-sm text-light">Редагувати</a>
+                        </td>
+                    }
 
-            </tr>
+                </tr>
             }
-            </tbody>
+        </tbody>
     </table>
 </div>
+
+
