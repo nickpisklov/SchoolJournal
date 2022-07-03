@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using SchoolJournal.Models;
+using SchoolJournal.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,12 +22,14 @@ namespace SchoolJournal.Controllers
 
         public IActionResult HomeAdministration()
         {
+            ViewBag.Status = Status.Admin;
             return View();
         }
 
         [HttpGet]
         public IActionResult AddStudent()
         {
+            ViewBag.Status = Status.Admin;
             var fkClasses = Class.GetFkClassSelectList(_db);
             ViewBag.ClassesSelect = fkClasses;
             return View();
