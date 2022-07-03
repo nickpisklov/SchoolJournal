@@ -6,8 +6,23 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
 </head>
 <body>
-    <div class="text-center text-light bg-dark" style="height: 120px; padding-top: 1%">
-        <h1>School Journal</h1>
+    <div class="text-center bg-dark" style="height: 120px; padding-top: 1%">
+        <h1 class="text-light">School Journal</h1>
+        @if (Context.Session.GetString("Status") == "Guest")
+        {
+
+        }
+        else if (Context.Session.GetString("Status") == "Admin")
+        {
+            <a asp-controller="Home" asp-action="Home" class="text-light mr-3">Журнали</a>
+            <a class="text-light mr-3">Розклад</a>
+            <a asp-controller="Administration" asp-action="HomeAdministration" class="text-light">Адміністрування</a>
+        }
+        else
+        {
+            <a asp-controller="Home" asp-action="Home" class="text-light mr-3">Журнали</a>
+            <a class="text-light mr-3">Розклад</a>
+        }
     </div>
     <div>
         @RenderBody()

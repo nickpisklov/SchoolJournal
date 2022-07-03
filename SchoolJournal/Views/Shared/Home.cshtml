@@ -1,8 +1,39 @@
-﻿@model Lesson
-@{
+﻿@{
     ViewBag.Title = "Головна сторінка";
     Layout = "_MainLayout";
+    IEnumerable<HomeJournalsContent> journals = ViewBag.JournalsInfo;
 }
 <div class="text-center">
-    <h3>Тут буде головна сторінка</h3>
+    <h4 class="mt-3">Список доступних журналів</h4>
+    <table class="table table-striped mt-4">
+        <thead>
+            <tr>
+                <td><b>Предмет</b></td>
+                <td><b>Клас</b></td>
+                <td><b>Вчитель</b></td>
+                <td></td>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (HomeJournalsContent j in journals)
+            {
+                <tr>
+                    <td>@j.SubjectDetails.Title</td>
+                    <td>@j.ClassDetails.Title</td>
+                    <td>@j.TeacherDetails.Surname @j.TeacherDetails.Name @j.TeacherDetails.Middlename</td>
+                    <td>
+                        @{var parameters = new Dictionary<string, string>
+                            {
+                                { "subjectId", j.SubjectDetails.Id.ToString() },
+                                { "teacherId", j.TeacherDetails.Id.ToString() },
+                                { "classId", j.ClassDetails.Id.ToString() }
+                            };
+                        }
+                            <a asp-action="ViewJournal" asp-all-route-data="@parameters" 
+                               class="btn btn-dark btn-sm text-light">Переглянути</a>
+                    </td>
+                </tr>
+            }
+        </tbody>  
+    </table>
 </div>

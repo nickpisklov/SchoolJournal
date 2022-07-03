@@ -4,20 +4,24 @@ using System.Linq;
 using SchoolJournal.Models;
 using System;
 using Microsoft.AspNetCore.Http;
+using System.Collections.Generic;
+using System.Text.Json.Serialization;
+using Newtonsoft.Json.Converters;
 
 namespace SchoolJournal.ViewModels
 {
     public enum Status
     {
-        Guest,
-        Student,
+        Guest, 
+        Student, 
         Teacher,
         Admin
     }
 
     public class User
     {
-        private Status _status = Status.Guest;
+        [JsonConverter(typeof(StringEnumConverter))]
+        public Status _status { get; set; }
         public int Id { get; set; }
         public string Login { get; set; }
         public string Password { get; set; }
@@ -59,7 +63,7 @@ namespace SchoolJournal.ViewModels
             Surname = Convert.ToString(student.Surname);
             Middlename = Convert.ToString(student.Middlename);
             Class = Convert.ToInt32(student.FkClass);
-            SetStatus(Status.Student);
+            _status = Status.Student;
         }
         public void SetTeacherPropertiesFromDB(Teacher teacher)
         {
@@ -69,23 +73,26 @@ namespace SchoolJournal.ViewModels
             Middlename = Convert.ToString(teacher.Middlename);
             HireDate = Convert.ToDateTime(teacher.HireDate);
             FireDate = Convert.ToDateTime(teacher.FireDate);
-            SetStatus(Status.Teacher);
+            _status = Status.Teacher;
         }
         public void SetAdminPropertiesFromDB(Admin admin) 
         {
             Id = Convert.ToInt32(admin.Id);
             Name = Convert.ToString(admin.Login);
             Surname = Convert.ToString(admin.Password);
-            SetStatus(Status.Admin);
+            _status = Status.Admin;
         }
-        public Status GetStatus()
+        public List<Journal> GetJournalsForTeacher(SchoolJournalContext db) 
         {
-            return _status;
+            return db.Journals.Where(j => j.FkTeacher == Id && j.FkSchoolYear == SchoolYear.GetCurrentYearId(db)).ToList();
         }
-        public void SetStatus(Status status)
+        public List<Journal> GetJournalsForStudent(SchoolJournalContext db)
         {
-            _status = status;
+            return db.Journals.Where(j => j.FkClass == Class && j.FkSchoolYear == SchoolYear.GetCurrentYearId(db)).ToList();
         }
-
+        public List<Journal> GetJournalsForAdmin(SchoolJournalContext db)
+        {
+            return db.Journals.Where(j => j.FkSchoolYear == SchoolYear.GetCurrentYearId(db)).ToList();
+        }
     }
 }

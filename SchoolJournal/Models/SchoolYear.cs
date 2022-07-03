@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace SchoolJournal.Models
@@ -28,6 +29,10 @@ namespace SchoolJournal.Models
                 { Value = s.Id.ToString(), Text = $"{s.StartDate.ToString("yyyy")}-{s.EndDate.ToString("yyyy")}" });
             }
             return fkYears;
+        }
+        public static int GetCurrentYearId(SchoolJournalContext db) 
+        {
+            return db.SchoolYears.Where(s => s.StartDate <= DateTime.Now && s.EndDate >= DateTime.Now).Select(s => s.Id).FirstOrDefault();
         }
     }
 }

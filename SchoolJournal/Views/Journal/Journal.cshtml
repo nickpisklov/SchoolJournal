@@ -38,7 +38,7 @@
 
                             };
                             <td class="text-center">
-                                @if (Status.Teacher.Equals(ViewBag.Status))
+                                @if (Context.Session.GetString("Status") == "Teacher")
                                 {
                                     <a asp-action="EditMark"
                                        asp-all-route-data="parameters" class="btn btn-light btn-block" style="height:38px">
@@ -60,7 +60,7 @@
 
                             };
                             <td class="text-center">
-                                @if (Status.Teacher.Equals(ViewBag.Status))
+                                @if (Context.Session.GetString("Status") == "Teacher")
                                 {
                                     <a asp-action="EditMark"
                                        asp-all-route-data="parameters" class="btn btn-light btn-block" style="height:38px">
@@ -101,7 +101,7 @@
                 <th class="col-sm-1">Дата</th>
                 <th>Тема</th>
                 <th>Домашнє завдвння</th>
-                @if (Status.Teacher.Equals(ViewBag.Status) || Status.Admin.Equals(ViewBag.Status))
+                @if (Context.Session.GetString("Status") == "Teacher")
                 {
                     <th class="col-sm-1"></th>
                 }
@@ -120,7 +120,7 @@
                     <td>
                         @l.Homework
                     </td>
-                    @if (Status.Teacher.Equals(ViewBag.Status) || Status.Admin.Equals(ViewBag.Status))
+                    @if (Context.Session.GetString("Status") == "Teacher")
                     {
                         <td class="text-center">
                             <a asp-action="EditLessonInfo" asp-route-lessonId="@l.Id" class="btn btn-dark btn-sm text-light">Редагувати</a>

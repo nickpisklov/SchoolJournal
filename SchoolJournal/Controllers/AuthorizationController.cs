@@ -21,6 +21,7 @@ namespace SchoolJournal.Controllers
         [HttpGet]
         public ViewResult Index()
         {
+            HttpContext.Session.SetString("Status", "Guest");
             return View();
         }
         
@@ -30,19 +31,22 @@ namespace SchoolJournal.Controllers
             if (user.GetUserStatusByLoginAndPassword(_db) == Status.Teacher)
             {
                 user.SetTeacherPropertiesFromDB(Teacher.GetTeacherByLogin(_db, user.Login));
-                HttpContext.Session.SetString("User", JsonConvert.SerializeObject(user));
-                return RedirectToAction("Home");
+                HttpContext.Session.SetString("UserObject", JsonConvert.SerializeObject(user));
+                HttpContext.Session.SetString("Status", "Teacher");
+                return RedirectToAction("Home", "Home");
             }
             else if (user.GetUserStatusByLoginAndPassword(_db) == Status.Student)
             {
                 user.SetStudentPropertiesFromDB(Student.GetStudentByLogin(_db, user.Login));
-                HttpContext.Session.SetString("User", JsonConvert.SerializeObject(user));
-                return RedirectToAction("Home");
+                HttpContext.Session.SetString("UserObject", JsonConvert.SerializeObject(user));
+                HttpContext.Session.SetString("Status", "Student");
+                return RedirectToAction("Home", "Home");
             }
             else if (user.GetUserStatusByLoginAndPassword(_db) == Status.Admin) 
             {
                 user.SetAdminPropertiesFromDB(Admin.GetAdminByLogin(_db, user.Login));
-                HttpContext.Session.SetString("User", JsonConvert.SerializeObject(user));
+                HttpContext.Session.SetString("UserObject", JsonConvert.SerializeObject(user));
+                HttpContext.Session.SetString("Status", "Admin");
                 return RedirectToAction("HomeAdministration", "Administration");
             }
             else
@@ -50,11 +54,6 @@ namespace SchoolJournal.Controllers
                 ViewBag.IsGuest = true;
                 return View();
             }                    
-        }
-        public IActionResult Home()
-        {
-            var user = JsonConvert.DeserializeObject<User>(HttpContext.Session.GetString("User"));
-            return View();
         }
     }
 }

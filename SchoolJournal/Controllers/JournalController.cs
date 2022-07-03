@@ -30,13 +30,10 @@ namespace SchoolJournal.Controllers
 
         public IActionResult Journal(int? pageNumber)
         {
-            //-----From session variables-----
-            int teacherId = 1;
-            int classId = 1;
-            int subjectId = 1;
-            int schoolYearId = 2;
-            ViewBag.Status = Status.Student;
-            //--------------------------------
+            int teacherId = (int)HttpContext.Session.GetInt32("TeacherId");
+            int classId = (int)HttpContext.Session.GetInt32("ClassId");
+            int subjectId = (int)HttpContext.Session.GetInt32("SubjectId");
+            int schoolYearId = (int)HttpContext.Session.GetInt32("YearId");
             List<Lesson> lessons = Lesson.GetLessonsForClass(_db, classId, schoolYearId, subjectId, teacherId).ToList();
             List<Student> students = Student.GetStudentsByClass(_db, classId).ToList();
             List<Progress> progresses = _db.Progresses.ToList();
