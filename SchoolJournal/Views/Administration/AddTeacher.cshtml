@@ -8,13 +8,7 @@
 {
 
 }
-else if (ViewBag.Message == "Невірна дата прийому на роботу! Дата повинна бути менша за теперешню.")
-{
-    <div class="text-center mb-3">
-        <b class="text-danger">@ViewBag.Message</b>
-    </div>
-}
-else if (ViewBag.Message == "Такий логін вже існує!")
+else if (ViewBag.Message == "Невірна дата прийому на роботу! Дата повинна бути менша за теперешню." || ViewBag.Message == "Такий логін вже існує!")
 {
     <div class="text-center mb-3">
         <b class="text-danger">@ViewBag.Message</b>
