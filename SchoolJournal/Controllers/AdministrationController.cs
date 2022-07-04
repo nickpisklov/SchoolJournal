@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using SchoolJournal.Models;
 using SchoolJournal.ViewModels;
@@ -65,21 +66,22 @@ namespace SchoolJournal.Controllers
         [HttpPost]
         public IActionResult AddClass(Class newClass)
         {
+            Regex regex = new Regex("^([1-9]|1[01])[-][А-Я]{1}$");
             if (newClass.IsClassExists(_db))
             {
                 ViewBag.Message = "Такий клас вже існує!";
                 return View();
             }
-            else if (newClass.Title.Length <= 4)
+            else if (regex.IsMatch(newClass.Title) == false || newClass.Title.Length > 4)
+            {
+                ViewBag.Message = "Ви невірно ввели назву класу! Приклад назви: 2-Б";
+                return View();                
+            }
+            else
             {
                 ViewBag.Message = "Ви вдало додали клас!";
                 _db.Classes.Add(newClass);
                 _db.SaveChanges();
-                return View();
-            }
-            else
-            {
-                ViewBag.Message = "Ви невірно ввели назву класу! Як приклад назва має бути наприклад така - 12-Б";
                 return View();
             }
 
@@ -131,13 +133,21 @@ namespace SchoolJournal.Controllers
             if (newJournal.IsJournalExists(_db))
             {
                 ViewBag.Message = "Такий журнал вже існує!";
+                return View();
             }
-            else 
+            else if (newJournal.FkClass.ToString() == "0" || newJournal.FkSchoolYear.ToString() == "0" || 
+                newJournal.FkSubject.ToString() == "0" || newJournal.FkTeacher.ToString() == "0") 
+            {
+                ViewBag.Message = "Ви повинні обрати всі поля!";
+                return View();
+            }
+            else
             {
                 newJournal.AddJournalWithDependencies(_db);
                 ViewBag.Message = "Ви вдало додали журнал!";
+                return View();
             }        
-            return View();
+            
         }
     }
 }

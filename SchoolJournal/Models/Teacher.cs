@@ -45,7 +45,7 @@ namespace SchoolJournal.Models
         {
             var teachers = db.Teachers.Where(t => t.FireDate == null);
             List<SelectListItem> fkTeachers = new List<SelectListItem>();
-            fkTeachers.Add(new SelectListItem { Value = "Вчитель не обран", Text = "Оберіть вчителя" });
+            fkTeachers.Add(new SelectListItem { Value = "0", Text = "Оберіть вчителя" });
             foreach (Teacher t in teachers)
             {
                 fkTeachers.Add(new SelectListItem

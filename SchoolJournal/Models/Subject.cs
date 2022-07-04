@@ -24,7 +24,7 @@ namespace SchoolJournal.Models
         {
             var subjects = db.Subjects;
             List<SelectListItem> fkSubjects = new List<SelectListItem>();
-            fkSubjects.Add(new SelectListItem { Value = "Предмет не обран", Text = "Оберіть предмет" });
+            fkSubjects.Add(new SelectListItem { Value = "0", Text = "Оберіть предмет" });
             foreach (Subject s in subjects)
             {
                 fkSubjects.Add(new SelectListItem

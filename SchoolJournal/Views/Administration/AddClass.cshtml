@@ -4,29 +4,27 @@
     ViewBag.Title = "Додати клас";
 }
 <form method="post">
-    @if (ViewBag.Message == "Ви невірно ввели назву класу! Як приклад назва має бути 12-Б")
+    @if (ViewBag.Message == "Ви невірно ввели назву класу! Приклад назви: 2-Б" || ViewBag.Message == "Такий клас вже існує!")
     {
         <div class="text-center mb-3">
             <b class="text-danger">@ViewBag.Message</b>
         </div>
     }
-    else if (ViewBag.Message == "Такий клас вже існує!")
-    {
-        <div class="text-center mb-3">
-            <b class="text-danger">@ViewBag.Message</b>
-        </div>
-    }
-    else
+    else if (ViewBag.Message == "Ви вдало додали клас!")
     {
         <div class="text-center mb-3">
             <b class="text-success">@ViewBag.Message</b>
         </div>
     }
+    else if (ViewBag.Message == null) 
+    {
+
+    }
     <div class="row justify-content-center mt-3">
         <label asp-for="Title" class="mr-3">Назва класу</label>
     </div>
     <div class="row justify-content-center">
-        <input asp-for="Title" class="form-control col-3" required />
+        <input asp-for="Title" class="form-control col-1" required />
     </div>
 
     <div class="row justify-content-center mt-3">

@@ -37,7 +37,7 @@ namespace SchoolJournal.Models
         }
         public bool IsClassExists(SchoolJournalContext db)
         {
-            var clas = db.Classes.Where(c => c.Title == Title && c.RecruitmentDate == RecruitmentDate);
+            var clas = db.Classes.Where(c => c.Title == Title && c.RecruitmentDate.Equals(RecruitmentDate)).FirstOrDefault();
             if (clas == null) 
             {
                 return false;

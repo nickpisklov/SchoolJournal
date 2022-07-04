@@ -22,7 +22,7 @@ namespace SchoolJournal.Models
         {
             var years = db.SchoolYears;
             List<SelectListItem> fkYears = new List<SelectListItem>();
-            fkYears.Add(new SelectListItem { Value = "Рік не обран", Text = "Оберіть навчальний рік" });
+            fkYears.Add(new SelectListItem { Value = "0", Text = "Оберіть навчальний рік" });
             foreach (SchoolYear s in years)
             {
                 fkYears.Add(new SelectListItem 
