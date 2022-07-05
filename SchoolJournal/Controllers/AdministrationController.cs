@@ -66,13 +66,12 @@ namespace SchoolJournal.Controllers
         [HttpPost]
         public IActionResult AddClass(Class newClass)
         {
-            Regex regex = new Regex("^([1-9]|1[01])[-][А-Я]{1}$");
             if (newClass.IsClassExists(_db))
             {
                 ViewBag.Message = "Такий клас вже існує!";
                 return View();
             }
-            else if (regex.IsMatch(newClass.Title) == false || newClass.Title.Length > 4)
+            else if (Regex.IsMatch(newClass.Title, "^([1-9]|1[01])[-][А-Я]{1}$") == false || newClass.Title.Length > 4)
             {
                 ViewBag.Message = "Ви невірно ввели назву класу! Приклад назви: 2-Б";
                 return View();                
