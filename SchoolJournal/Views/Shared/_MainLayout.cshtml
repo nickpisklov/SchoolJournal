@@ -15,13 +15,13 @@
         else if (Context.Session.GetString("Status") == "Admin")
         {
             <a asp-controller="Home" asp-action="Home" class="text-light mr-3">Журнали</a>
-            <a class="text-light mr-3">Розклад</a>
+            <a asp-controller="Schedule" asp-action="ScheduleRedirect" class="text-light mr-3">Розклад</a>
             <a asp-controller="Administration" asp-action="HomeAdministration" class="text-light">Адміністрування</a>
         }
         else
         {
             <a asp-controller="Home" asp-action="Home" class="text-light mr-3">Журнали</a>
-            <a class="text-light mr-3">Розклад</a>
+            <a asp-controller="Schedule" asp-action="ScheduleRedirect" class="text-light mr-3">Розклад</a>
         }
     </div>
     <div>

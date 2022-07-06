@@ -31,6 +31,10 @@ namespace SchoolJournal.Models
             return db.Lessons.Where(l => l.FkClass == classId && l.FkSchoolYear == schoolYearId
                 && l.FkSubject == subjectId && l.FkTeacher == teacherId);
         }
+        public static IQueryable<Lesson> GetLessonsForClass(SchoolJournalContext db, int classId, int schoolYearId)
+        {
+            return db.Lessons.Where(l => l.FkClass == classId && l.FkSchoolYear == schoolYearId);
+        }
         public static Lesson GetLessonById(SchoolJournalContext db, int lessonId) 
         {
             return db.Lessons.Where(l => l.Id == lessonId).FirstOrDefault();
