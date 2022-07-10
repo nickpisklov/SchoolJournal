@@ -1,0 +1,87 @@
+﻿@model Paging<DateTime>
+@using System.Globalization;
+@{
+    Layout = "_MainLayout";
+    ViewBag.Title = "Розклад";
+    IEnumerable<ScheduleContent> lessons = ViewBag.Lessons;
+    List<LessonTime> times = ViewBag.LessonTime;
+}
+@{string month = CultureInfo.GetCultureInfo("uk-UA").DateTimeFormat.GetMonthName(Model[0].Month); }
+<h4 class="mt-2 ml-3 text-center">@char.ToUpper(month[0])@month.Substring(1) @Model[0].ToString("yyyy")</h4>
+<table class="table table-bordered mt-3">
+    <thead>
+        <tr class="thead-light">
+            <th></th>
+            @foreach (DateTime day in Model)
+            {
+                <th class="text-center pt-1 pb-1">
+                    @day.Day<br />
+                    @{
+                        string dayName = CultureInfo.GetCultureInfo("uk-UA").DateTimeFormat.GetDayName(day.DayOfWeek);
+                    }
+                    @char.ToUpper(dayName[0])@dayName.Substring(1)
+                </th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (LessonTime time in times)
+        {
+            <tr>
+                <td style="width:8%" class="text-center"><b>@time.StartTime-@time.EndTime</b></td>
+                @foreach (DateTime day in Model)
+                {
+                    var lesson = lessons.Where(l => l.LessonDetails.LessonDate == day && l.LessonDetails.FkLessonTime == time.Id).FirstOrDefault();
+                    if (lesson == null)
+                    {
+                        <td style="width:12.5%; height:75px"></td>
+                    }
+                    else
+                    {
+                        <td style="width:12.5%" class="pt-0 pb-0">
+                            @lesson.SubjectDetails.Title<br />
+                            @lesson.ClassDetails.Title<br />
+                            @lesson.TeacherDetails.Surname @lesson.TeacherDetails.Name[0]. @lesson.TeacherDetails.Middlename[0].
+                            
+                        </td>
+                    }
+                }
+            </tr>
+
+        }
+    </tbody>
+</table>
+@{
+    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+}
+@if (Context.Session.GetString("Status") == "Student")
+{
+    <a asp-action="ClassSchedule"
+       asp-route-pageNumber="@(Model.PageIndex - 1)"
+       class="btn btn-dark btn-sm @prevDisabled">Попередня сторінка</a>
+
+    <a asp-action="ClassSchedule"
+       asp-route-pageNumber="@(Model.PageIndex + 1)"
+       class="btn btn-dark btn-sm @nextDisabled">Наступна сторінка</a>
+}
+else if (Context.Session.GetString("Status") == "Teacher")
+{
+    <a asp-action="TeacherSchedule"
+       asp-route-pageNumber="@(Model.PageIndex - 1)"
+       class="btn btn-dark btn-sm @prevDisabled">Попередня сторінка</a>
+
+    <a asp-action="TeacherSchedule"
+       asp-route-pageNumber="@(Model.PageIndex + 1)"
+       class="btn btn-dark btn-sm @nextDisabled">Наступна сторінка</a>
+}
+else if (Context.Session.GetString("Status") == "Admin")
+{
+    <a asp-action="AdminSchedule"
+       asp-route-pageNumber="@(Model.PageIndex - 1)"
+       class="btn btn-dark btn-sm @prevDisabled">Попередня сторінка</a>
+
+    <a asp-action="AdminSchedule"
+       asp-route-pageNumber="@(Model.PageIndex + 1)"
+       class="btn btn-dark btn-sm @nextDisabled">Наступна сторінка</a>
+}

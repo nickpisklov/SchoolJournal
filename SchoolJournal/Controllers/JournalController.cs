@@ -54,7 +54,7 @@ namespace SchoolJournal.Controllers
             ViewBag.SubjectTitle = Subject.GetSubjectTitleById(_db, subjectId);
             ViewBag.ClassTitle = Class.GetClassTitleById(_db, classId);
             HttpContext.Session.SetInt32("pageNumber", pageNumber ?? 1);
-            return View(JournalPaging<Lesson>.Create(lessons, pageNumber ?? 1, 15));
+            return View(Paging<Lesson>.Create(lessons, pageNumber ?? 1, 15));
         }
 
         [HttpGet]
