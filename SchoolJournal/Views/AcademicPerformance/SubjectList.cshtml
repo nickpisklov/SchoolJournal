@@ -1,0 +1,27 @@
+﻿@model IEnumerable<SubjectListContent>
+@{
+    Layout = "_MainLayout";
+    ViewBag.Title = "Список предметів";
+}
+<table class="table table-striped">
+    @foreach (SubjectListContent subjectListContent in Model)
+    {
+        var parameters = new Dictionary<string, string>
+            {
+                { "fkSubject", subjectListContent.JournalDetails.FkSubject.ToString() },
+                { "fkTeacher" , subjectListContent.JournalDetails.FkTeacher.ToString()}
+            };
+        <tr>
+            <td style="width:60%; padding-left:30%">
+                @subjectListContent.SubjectDetails.Title
+            </td>
+            <td>
+                <a class="btn btn-dark btn-sm" asp-all-route-data="parameters" asp-action="AcademicPerformance">
+                    Переглянути успішність з предмету
+                </a>
+            </td>
+        </tr>
+    }
+</table>
+
+
