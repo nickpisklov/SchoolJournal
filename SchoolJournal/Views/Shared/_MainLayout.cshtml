@@ -18,6 +18,12 @@
             <a asp-controller="Schedule" asp-action="ScheduleRedirect" class="text-light mr-3">Розклад</a>
             <a asp-controller="Administration" asp-action="HomeAdministration" class="text-light">Адміністрування</a>
         }
+        else if (Context.Session.GetString("Status") == "Student")
+        {
+            <a asp-controller="Home" asp-action="Home" class="text-light mr-3">Журнали</a>
+            <a asp-controller="Schedule" asp-action="ScheduleRedirect" class="text-light mr-3">Розклад</a>
+            <a asp-controller="AcademicPerformance" asp-action="SubjectList" class="text-light mr-3">Успішність</a>
+        }
         else
         {
             <a asp-controller="Home" asp-action="Home" class="text-light mr-3">Журнали</a>
