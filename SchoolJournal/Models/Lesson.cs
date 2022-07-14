@@ -11,7 +11,6 @@ namespace SchoolJournal.Models
         {
             Progresses = new HashSet<Progress>();
         }
-
         public int Id { get; set; }
         public int FkTeacher { get; set; }
         public int FkSubject { get; set; }
@@ -42,6 +41,24 @@ namespace SchoolJournal.Models
         public static Lesson GetLessonById(SchoolJournalContext db, int lessonId) 
         {
             return db.Lessons.Where(l => l.Id == lessonId).FirstOrDefault();
+        }
+        public void FillLesssonProperties(string fkClass, string fkTime, string lessonDate, int year)
+        {
+            //FkTeacher = Convert.ToInt32(fkTeacher);
+            //FkSubject = Convert.ToInt32(fkSubject);
+            FkClass = Convert.ToInt32(fkClass);
+            FkLessonTime = Convert.ToInt32(fkTime);
+            FkSchoolYear = year;
+            LessonDate = Convert.ToDateTime(lessonDate);
+            Theme = " ";
+            Homework = " ";
+        }
+        public void AddToDbWithDependencies(SchoolJournalContext db) 
+        {
+            var timeDep = db.LessonTimes.Find(FkLessonTime);
+            timeDep.Lessons.Add(this);
+            db.Lessons.Add(this);
+            db.SaveChanges();
         }
     }
 }
