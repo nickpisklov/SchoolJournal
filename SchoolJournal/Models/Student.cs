@@ -17,6 +17,7 @@ namespace SchoolJournal.Models
         public string Name { get; set; }
         public string Surname { get; set; }
         public string Middlename { get; set; }
+        public string ParrentMail { get; set; }
 
         public virtual Class FkClassNavigation { get; set; }
         public virtual ICollection<Progress> Progresses { get; set; }

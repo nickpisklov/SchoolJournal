@@ -31,7 +31,7 @@ namespace SchoolJournal
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Server=DESKTOP-2OMG8RT;Database=SchoolJournal;Trusted_Connection=True;");
+                optionsBuilder.UseSqlServer("Server=LAPTOP-SGSK4TL1;Database=SchoolJournal;Trusted_Connection=True;");
             }
         }
 

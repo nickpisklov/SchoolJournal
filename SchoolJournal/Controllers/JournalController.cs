@@ -11,6 +11,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Session;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
+using System.Net;
+using System.Net.Mail;
 
 namespace SchoolJournal.Controllers
 {
@@ -95,21 +97,77 @@ namespace SchoolJournal.Controllers
         [HttpPost]
         public IActionResult EditMark(Progress progress) 
         {
+            Student stud=  _db.Students.Where(s => s.Id == progress.FkStudent).FirstOrDefault();
+            Mark mrkname= _db.Marks.Where(s => s.Id == progress.FkMark).FirstOrDefault();
+            Lesson lessonnow = _db.Lessons.Where(s => s.Id == progress.FkLesson).FirstOrDefault();
+            Subject subj= _db.Subjects.Where(s => s.Id == lessonnow.FkSubject).FirstOrDefault();
+            Teacher teach= _db.Teachers.Where(s => s.Id == lessonnow.FkTeacher).FirstOrDefault();
+
+            //Teacher teach = _db.Teachers.Where(s => s.Id == ).FirstOrDefault();
+
             var progressCheck = Progress.GetProgressByStudentAndLessonId(_db, progress.FkStudent, progress.FkLesson);
-            if (progress.FkMark.ToString() == "0")
+            if (mrkname.MarkValue.ToString() == "n")
             {
+                sendEmail("Неявка на заннятя", "Ваш ребенок " + stud.Surname + " " + stud.Name + " отсутствовал на уроке " + subj.Title + " " + lessonnow.LessonDate+" - "
+                    +teach.Middlename+" "+teach.Name,stud.ParrentMail);
                 return RedirectToRoute(new { action = "Journal", controller = "Journal", pageNumber = HttpContext.Session.GetInt32("pageNumber") });
             }
-            else if (progressCheck == null) 
+            else
+            if (progress.FkMark.ToString() == "0")
             {
+                //sendEmail("FirstAttempt", "Ваш ребенок " + stud.Surname + " " + stud.Name + " не получил оценку за урок " + subj.Title + " "  + lessonnow.LessonDate);
+                return RedirectToRoute(new { action = "Journal", controller = "Journal", pageNumber = HttpContext.Session.GetInt32("pageNumber") });
+            }
+            else if (progressCheck == null)
+            {
+                if (Convert.ToInt32(mrkname.MarkValue.ToString()) <= 4)
+                {
+                    sendEmail("Початковий бал", "Шановні батьки!\n \n Ваша дитина " + stud.Surname + " " + stud.Name + " отримала бали початкового рівня " 
+                        + mrkname.MarkValue.ToString() + " на уроці " + subj.Title + " " + lessonnow.LessonDate+ 
+                        ". Велике прохання звернути увагу!\n "+teach.Middlename+" "+teach.Name, stud.ParrentMail);
+                }
                 progress.AddToDbWithDependencies(_db, progress);
                 return RedirectToRoute(new { action = "Journal", controller = "Journal", pageNumber = HttpContext.Session.GetInt32("pageNumber") });        
             }
             else
             {
+                if (Convert.ToInt32(mrkname.MarkValue.ToString()) <= 4)
+                {
+                    sendEmail("Зміна балу на початковий бал ", "Шановні батьки!\n "+"\n"+" Вашій дитині " + stud.Surname + " " + stud.Name + " изменили оценку на початковий рівень: " 
+                        + mrkname.MarkValue.ToString() + " на уроці "+subj.Title+" "+ lessonnow.LessonDate +
+                        ". Велике прохання звернути увагу!\n " + teach.Middlename + " " + teach.Name, stud.ParrentMail); 
+                }
                 progress.ModifyDbRecord(_db, progress, progressCheck);
                 return RedirectToRoute(new { action = "Journal", controller = "Journal", pageNumber = HttpContext.Session.GetInt32("pageNumber") });
             }   
+        }
+
+        void sendEmail(string mainTheme, string mark, string parmail)
+        {
+           
+            string to = parmail; //To address    
+            string from = "sendaspnet@gmail.com"; //From address    
+            MailMessage message = new MailMessage(from, to);
+
+            string mailbody = mark;
+            message.Subject = mainTheme;
+            message.Body = mailbody;
+            message.IsBodyHtml = true;
+            SmtpClient client = new SmtpClient("smtp.gmail.com", 587); //Gmail smtp    
+            System.Net.NetworkCredential basicCredential1 = new
+            System.Net.NetworkCredential("sendaspnet@gmail.com", "gvjdqdtbavbjdtxh");
+            client.EnableSsl = true;
+            client.UseDefaultCredentials = false;
+            client.Credentials = basicCredential1;
+            try
+            {
+                client.Send(message);
+            }
+
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         [HttpPost]
