@@ -102,40 +102,39 @@ namespace SchoolJournal.Controllers
             Lesson lessonnow = _db.Lessons.Where(s => s.Id == progress.FkLesson).FirstOrDefault();
             Subject subj= _db.Subjects.Where(s => s.Id == lessonnow.FkSubject).FirstOrDefault();
             Teacher teach= _db.Teachers.Where(s => s.Id == lessonnow.FkTeacher).FirstOrDefault();
-
-            //Teacher teach = _db.Teachers.Where(s => s.Id == ).FirstOrDefault();
-
             var progressCheck = Progress.GetProgressByStudentAndLessonId(_db, progress.FkStudent, progress.FkLesson);
-            if (mrkname.MarkValue.ToString() == "n")
-            {
-                sendEmail("Неявка на заннятя", "Ваш ребенок " + stud.Surname + " " + stud.Name + " отсутствовал на уроке " + subj.Title + " " + lessonnow.LessonDate+" - "
-                    +teach.Middlename+" "+teach.Name,stud.ParrentMail);
-                return RedirectToRoute(new { action = "Journal", controller = "Journal", pageNumber = HttpContext.Session.GetInt32("pageNumber") });
-            }
-            else
             if (progress.FkMark.ToString() == "0")
             {
-                //sendEmail("FirstAttempt", "Ваш ребенок " + stud.Surname + " " + stud.Name + " не получил оценку за урок " + subj.Title + " "  + lessonnow.LessonDate);
                 return RedirectToRoute(new { action = "Journal", controller = "Journal", pageNumber = HttpContext.Session.GetInt32("pageNumber") });
             }
             else if (progressCheck == null)
             {
-                if (Convert.ToInt32(mrkname.MarkValue.ToString()) <= 4)
+                if (mrkname.MarkValue == "Н")
                 {
-                    sendEmail("Початковий бал", "Шановні батьки!\n \n Ваша дитина " + stud.Surname + " " + stud.Name + " отримала бали початкового рівня " 
-                        + mrkname.MarkValue.ToString() + " на уроці " + subj.Title + " " + lessonnow.LessonDate+ 
-                        ". Велике прохання звернути увагу!\n "+teach.Middlename+" "+teach.Name, stud.ParrentMail);
+                    sendEmail("Неявка на заннятя", "Шановні батьки! Ваша дитина " + stud.Surname + " " + stud.Name + " був(ла) відсутня на занятті " + subj.Title + " " + lessonnow.LessonDate.ToString("dd.MM.yyyy") + ". Велике прохання звернути увагу! "
+                    + teach.Surname + " " + teach.Name + " " + teach.Middlename, stud.ParrentMail);
+                }
+                else if (mrkname.MarkValue == "1" || mrkname.MarkValue == "2" || mrkname.MarkValue == "3")
+                {
+                    sendEmail("Початковий бал", "Шановні батьки!\n \nВаша дитина, " + stud.Surname + " " + stud.Name + ", отримав(ла) бали початкового рівня - "
+                        + mrkname.MarkValue.ToString() + ". На занятті " + subj.Title + " " + lessonnow.LessonDate.ToString("dd.MM.yyyy") +
+                        ". Велике прохання звернути увагу!\n " + teach.Surname + " " + teach.Name + " " + teach.Middlename, stud.ParrentMail);
                 }
                 progress.AddToDbWithDependencies(_db, progress);
                 return RedirectToRoute(new { action = "Journal", controller = "Journal", pageNumber = HttpContext.Session.GetInt32("pageNumber") });        
             }
             else
             {
-                if (Convert.ToInt32(mrkname.MarkValue.ToString()) <= 4)
+                if (mrkname.MarkValue == "Н")
                 {
-                    sendEmail("Зміна балу на початковий бал ", "Шановні батьки!\n "+"\n"+" Вашій дитині " + stud.Surname + " " + stud.Name + " изменили оценку на початковий рівень: " 
-                        + mrkname.MarkValue.ToString() + " на уроці "+subj.Title+" "+ lessonnow.LessonDate +
-                        ". Велике прохання звернути увагу!\n " + teach.Middlename + " " + teach.Name, stud.ParrentMail); 
+                    sendEmail("Неявка на заннятя", "Шановні батьки! Ваша дитина " + stud.Surname + " " + stud.Name + " був(ла) відсутня на занятті " + subj.Title + " " + lessonnow.LessonDate.ToString("dd.MM.yyyy") + ". Велике прохання звернути увагу! "
+                    + teach.Surname + " " + teach.Name + " " + teach.Middlename, stud.ParrentMail);
+                }
+                else if (mrkname.MarkValue == "1" || mrkname.MarkValue == "2" || mrkname.MarkValue == "3")
+                {
+                    sendEmail("Початковий бал", "Шановні батьки!\n \nВаша дитина, " + stud.Surname + " " + stud.Name + ", отримав(ла) бали початкового рівня - "
+                        + mrkname.MarkValue.ToString() + ". На занятті " + subj.Title + " " + lessonnow.LessonDate.ToString("dd.MM.yyyy") +
+                        ". Велике прохання звернути увагу!\n " + teach.Surname + " " + teach.Name + " " + teach.Middlename, stud.ParrentMail);
                 }
                 progress.ModifyDbRecord(_db, progress, progressCheck);
                 return RedirectToRoute(new { action = "Journal", controller = "Journal", pageNumber = HttpContext.Session.GetInt32("pageNumber") });
@@ -146,7 +145,7 @@ namespace SchoolJournal.Controllers
         {
            
             string to = parmail; //To address    
-            string from = "sendaspnet@gmail.com"; //From address    
+            string from = "SchoolJournal@gmail.com"; //From address    
             MailMessage message = new MailMessage(from, to);
 
             string mailbody = mark;
