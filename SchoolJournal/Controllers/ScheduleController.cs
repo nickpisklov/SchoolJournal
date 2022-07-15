@@ -101,5 +101,25 @@ namespace SchoolJournal.Controllers
             HttpContext.Session.SetString("ClassId", classId);
             return RedirectToAction("AdminSchedule");
         }
+        [HttpGet]
+        public IActionResult AddLesson(string lessonDate, string fkTime)  
+        {
+            ViewBag.Teachers = Teacher.GetFkTeachersSelectList(_db);
+            ViewBag.Subjects = Subject.GetFkSubjectsSelectList(_db);
+            HttpContext.Session.SetString("NewLessonsDate", lessonDate);
+            HttpContext.Session.SetString("NewLessonTime", fkTime);
+            return View();
+        }
+        [HttpPost]
+        public IActionResult AddLesson(Lesson newLesson) 
+        {
+            int year = SchoolYear.GetCurrentYearId(_db);
+            string clas = HttpContext.Session.GetString("ClassId");
+            string date = HttpContext.Session.GetString("NewLessonsDate");
+            string time = HttpContext.Session.GetString("NewLessonTime");
+            newLesson.FillLesssonProperties(clas, time, date, year);
+            newLesson.AddToDbWithDependencies(_db);
+            return RedirectToRoute(new { action = "AdminSchedule", controller = "Schedule", pageNumber = HttpContext.Session.GetInt32("pageNumber") });
+        }
     }
 }
