@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using SchoolJournal.Models;
 using SchoolJournal.ViewModels;
@@ -42,7 +43,7 @@ namespace SchoolJournal.Controllers
                           { SubjectDetails = s, TeacherDetails = t, LessonDetails = l, ClassDetails = c };
             return content;
         }
-        public IActionResult ScheduleRedirect() 
+        public IActionResult ScheduleRedirect()
         {
             if (HttpContext.Session.GetString("Status") == "Teacher")
             {
@@ -52,7 +53,7 @@ namespace SchoolJournal.Controllers
             {
                 return RedirectToAction("ClassSchedule");
             }
-            else 
+            else
             {
                 return RedirectToAction("AdminSchedulesList");
             }
@@ -69,7 +70,7 @@ namespace SchoolJournal.Controllers
             HttpContext.Session.SetInt32("pageNumber", pageNumber ?? 1);
             return View("Schedule", Paging<DateTime>.Create(days, pageNumber ?? 1, 7));
         }
-        public IActionResult TeacherSchedule(int? pageNumber) 
+        public IActionResult TeacherSchedule(int? pageNumber)
         {
             var user = JsonConvert.DeserializeObject<User>(HttpContext.Session.GetString("UserObject"));
             List<Lesson> lessons = Lesson.GetLessonsForTeacher(_db, user.Id);
@@ -80,7 +81,7 @@ namespace SchoolJournal.Controllers
             HttpContext.Session.SetInt32("pageNumber", pageNumber ?? 1);
             return View("Schedule", Paging<DateTime>.Create(days, pageNumber ?? 1, 7));
         }
-        public IActionResult AdminSchedule(int? pageNumber) 
+        public IActionResult AdminSchedule(int? pageNumber)
         {
             int classId = Convert.ToInt32(HttpContext.Session.GetString("ClassId"));
             int schoolYearId = SchoolYear.GetCurrentYearId(_db);
@@ -91,18 +92,18 @@ namespace SchoolJournal.Controllers
             HttpContext.Session.SetInt32("pageNumber", pageNumber ?? 1);
             return View("Schedule", Paging<DateTime>.Create(days, pageNumber ?? 1, 7));
         }
-        public IActionResult AdminSchedulesList() 
+        public IActionResult AdminSchedulesList()
         {
             List<Class> classes = _db.Classes.OrderBy(c => c.Title).ToList();
             return View(classes);
         }
-        public IActionResult AdminSetSessionClassId(string classId) 
+        public IActionResult AdminSetSessionClassId(string classId)
         {
             HttpContext.Session.SetString("ClassId", classId);
             return RedirectToAction("AdminSchedule");
         }
         [HttpGet]
-        public IActionResult AddLesson(string lessonDate, string fkTime)  
+        public IActionResult AddLesson(string lessonDate, string fkTime)
         {
             ViewBag.Teachers = Teacher.GetFkTeachersSelectList(_db);
             ViewBag.Subjects = Subject.GetFkSubjectsSelectList(_db);
@@ -111,15 +112,90 @@ namespace SchoolJournal.Controllers
             return View();
         }
         [HttpPost]
-        public IActionResult AddLesson(Lesson newLesson) 
+        public IActionResult AddLesson(Lesson newLesson)
         {
             int year = SchoolYear.GetCurrentYearId(_db);
             string clas = HttpContext.Session.GetString("ClassId");
             string date = HttpContext.Session.GetString("NewLessonsDate");
             string time = HttpContext.Session.GetString("NewLessonTime");
             newLesson.FillLesssonProperties(clas, time, date, year);
-            newLesson.AddToDbWithDependencies(_db);
-            return RedirectToRoute(new { action = "AdminSchedule", controller = "Schedule", pageNumber = HttpContext.Session.GetInt32("pageNumber") });
+            if (newLesson.FkSubject.ToString() == "0" || newLesson.FkTeacher.ToString() == "0")
+            {
+                ViewBag.Message = "Заповніть всі поля!";
+                ViewBag.Teachers = Teacher.GetFkTeachersSelectList(_db);
+                ViewBag.Subjects = Subject.GetFkSubjectsSelectList(_db);
+                return View();
+            }
+            else if (_db.Journals.Where(j => j.FkClass == Convert.ToInt32(clas) 
+            && j.FkSubject == newLesson.FkSubject && j.FkTeacher == newLesson.FkTeacher && j.FkSchoolYear == year)
+                .FirstOrDefault() == null) 
+            {
+                ViewBag.Message = "У цього класу відсутній відповідний журнал!";
+                ViewBag.Teachers = Teacher.GetFkTeachersSelectList(_db);
+                ViewBag.Subjects = Subject.GetFkSubjectsSelectList(_db);
+                return View();
+            }
+            else
+            {
+                newLesson.AddToDbWithDependencies(_db);
+                return RedirectToRoute(new { action = "AdminSchedule", controller = "Schedule", pageNumber = HttpContext.Session.GetInt32("pageNumber") });
+            }       
+        }
+        [HttpGet]
+        public IActionResult EditLesson(string lessonId) 
+        {
+            ViewBag.Teachers = Teacher.GetFkTeachersSelectList(_db);
+            ViewBag.Subjects = Subject.GetFkSubjectsSelectList(_db);
+            Lesson lesson = Lesson.GetLessonById(_db, Convert.ToInt32(lessonId));
+            HttpContext.Session.SetString("oldLesson", JsonConvert.SerializeObject(lesson));
+            return View(lesson);
+        }
+        [HttpPost]
+        public IActionResult EditLesson(Lesson editedLesson)
+        {
+            Lesson oldLesson = JsonConvert.DeserializeObject<Lesson>(HttpContext.Session.GetString("oldLesson"));
+            oldLesson.FkSubject = editedLesson.FkSubject;
+            oldLesson.FkTeacher = editedLesson.FkTeacher;
+            if (oldLesson.FkSubject.ToString()=="0" || oldLesson.FkTeacher.ToString()=="0")
+            {
+                ViewBag.Message = "Заповніть всі поля!";
+                ViewBag.Teachers = Teacher.GetFkTeachersSelectList(_db);
+                ViewBag.Subjects = Subject.GetFkSubjectsSelectList(_db);
+                Lesson lesson = Lesson.GetLessonById(_db, Convert.ToInt32(oldLesson.Id));
+                HttpContext.Session.SetString("oldLesson", JsonConvert.SerializeObject(lesson));
+                return View(lesson);
+            }
+            else if (_db.Journals.Where(j => j.FkClass == oldLesson.FkClass && j.FkSubject == oldLesson.FkSubject 
+            && j.FkTeacher == oldLesson.FkTeacher && j.FkSchoolYear == oldLesson.FkSchoolYear)
+                .FirstOrDefault() == null)
+            {
+                ViewBag.Message = "У цього класу відсутній відповідний журнал!";
+                ViewBag.Teachers = Teacher.GetFkTeachersSelectList(_db);
+                ViewBag.Subjects = Subject.GetFkSubjectsSelectList(_db);
+                return View();
+            }
+            else 
+            {
+                _db.Entry(oldLesson).State = EntityState.Modified;
+                _db.SaveChanges();
+                return RedirectToRoute(new { action = "AdminSchedule", controller = "Schedule", pageNumber = HttpContext.Session.GetInt32("pageNumber") });
+            }
+           
+        }
+        public IActionResult DeleteLesson() 
+        {
+            Lesson lesson = JsonConvert.DeserializeObject<Lesson>(HttpContext.Session.GetString("oldLesson"));
+            if (_db.Progresses.Where(p => p.FkLesson == lesson.Id).FirstOrDefault() != null)
+            {
+                ViewBag.Message = "Вчитель вже виставив відмітки за цей урок!";
+                return View();
+            }
+            else 
+            {
+                _db.Lessons.Remove(lesson);
+                _db.SaveChanges();
+                return RedirectToRoute(new { action = "AdminSchedule", controller = "Schedule", pageNumber = HttpContext.Session.GetInt32("pageNumber") });
+            }
         }
     }
 }
