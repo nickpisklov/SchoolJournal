@@ -44,8 +44,6 @@ namespace SchoolJournal.Models
         }
         public void FillLesssonProperties(string fkClass, string fkTime, string lessonDate, int year)
         {
-            //FkTeacher = Convert.ToInt32(fkTeacher);
-            //FkSubject = Convert.ToInt32(fkSubject);
             FkClass = Convert.ToInt32(fkClass);
             FkLessonTime = Convert.ToInt32(fkTime);
             FkSchoolYear = year;
@@ -59,6 +57,12 @@ namespace SchoolJournal.Models
             timeDep.Lessons.Add(this);
             db.Lessons.Add(this);
             db.SaveChanges();
+        }
+        public void UpdateWithDependencies(SchoolJournalContext db, Lesson oldLesson) 
+        {
+            
+            db.SaveChanges();
+
         }
     }
 }

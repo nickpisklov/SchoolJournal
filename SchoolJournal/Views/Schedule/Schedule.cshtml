@@ -34,14 +34,14 @@
                 var lesson = lessons.Where(l => l.LessonDetails.LessonDate == day && l.LessonDetails.FkLessonTime == time.Id).FirstOrDefault();
                 if (lesson == null)
                 {
-                    if (Context.Session.GetString("Status") == "Admin")
+                    if (Context.Session.GetString("Status") == "Admin" && (day.Month > 8 || day.Month < 6))
                     {
-                        
+
                         Dictionary<string, string> parameters = new Dictionary<string, string> {
                             { "lessonDate", day.ToString()},
                             { "fkTime", time.Id.ToString()}
                         };
-                         
+
                         <td class="text-right pt-1 pr-1" style="width:12.5%; height:75px">
                             <a asp-action="AddLesson" asp-all-route-data="@parameters" class="btn btn-light pt-1 pb-1">+</a>
                         </td>
@@ -53,12 +53,27 @@
                 }
                 else
                 {
-                    <td style="width:12.5%" class="pt-0 pb-0">
-                        @lesson.SubjectDetails.Title<br />
-                        @lesson.ClassDetails.Title<br />
-                        @lesson.TeacherDetails.Surname @lesson.TeacherDetails.Name[0]. @lesson.TeacherDetails.Middlename[0].
+                    if (Context.Session.GetString("Status") == "Admin")
+                    {
+                        Dictionary<string, string> parameters = new Dictionary<string, string> {
+                            { "lessonId", lesson.LessonDetails.Id.ToString()}
+                        };
+                        <td style="width: 12.5%; height:75px" class="pt-1 pr-1">
+                            @lesson.SubjectDetails.Title <a asp-action="EditLesson" asp-all-route-data="@parameters" class="btn btn-light pt-1 pb-1 float-right">/</a><br />
+                            @lesson.ClassDetails.Title<br />
+                            @lesson.TeacherDetails.Surname @lesson.TeacherDetails.Name[0]. @lesson.TeacherDetails.Middlename[0].
 
-                    </td>
+                        </td>
+                    }
+                    else
+                    {
+                        <td style="width: 12.5%; height:75px" class="pt-1 pr-1">
+                            @lesson.SubjectDetails.Title<br />
+                            @lesson.ClassDetails.Title<br />
+                            @lesson.TeacherDetails.Surname @lesson.TeacherDetails.Name[0]. @lesson.TeacherDetails.Middlename[0].
+
+                        </td>
+                    }
                 }
             }
         </tr>

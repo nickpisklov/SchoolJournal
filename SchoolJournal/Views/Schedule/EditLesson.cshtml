@@ -1,10 +1,17 @@
 ﻿@model Lesson
 @{
-    ViewBag.Title = "Додавання уроку";
+    ViewBag.TItle = "Редагування уроку";
     Layout = "_MainLayout";
     List<SelectListItem> teachers = ViewBag.Teachers;
     List<SelectListItem> subjects = ViewBag.Subjects;
 }
+@Html.HiddenFor(model => model.Id)
+@Html.HiddenFor(model => model.FkClass)
+@Html.HiddenFor(model => model.FkSchoolYear)
+@Html.HiddenFor(model => model.FkLessonTime)
+@Html.HiddenFor(model => model.LessonDate)
+@Html.HiddenFor(model => model.Theme)
+@Html.HiddenFor(model => model.Homework)
 @if (ViewBag.Message != null)
 {
     <p class="text-danger text-center"><b>@ViewBag.Message</b></p>
@@ -26,10 +33,6 @@ else
         @Html.DropDownListFor(model => model.FkSubject, subjects, new { @class = "form-control col-sm-2 text-center" })
     </div>
     <div class="row justify-content-center">
-        <input asp-action="AddLesson" type="submit" value="Додати урок" class="btn btn-dark text-center mt-3" />
+        <input asp-action="EditLesson" type="submit" value="Зберігти зміни" class="btn btn-dark text-center mt-3 mr-3" />
     </div>
 </form>
-
-
-
-
