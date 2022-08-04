@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
 namespace SchoolJournal.Models
@@ -13,12 +14,18 @@ namespace SchoolJournal.Models
         }
 
         public int Id { get; set; }
+        [Required(ErrorMessage = "Будь ласка, введіть логін вчителя!")]
         public string Login { get; set; }
+        [Required(ErrorMessage = "Будь ласка, введіть пароль вчителя!")]
         public string Password { get; set; }
+        [Required(ErrorMessage = "Будь ласка, введіть ім'я вчителя!")]
         public string Name { get; set; }
+        [Required(ErrorMessage = "Будь ласка, введіть прізвище вчителя!")]
         public string Surname { get; set; }
+        [Required(ErrorMessage = "Будь ласка, введіть по-батькові вчителя!")]
         public string Middlename { get; set; }
-        public DateTime HireDate { get; set; }
+        [Required(ErrorMessage = "Будь ласка, введіть дату найму вчителя!")]
+        public DateTime? HireDate { get; set; }
         public DateTime? FireDate { get; set; }
 
         public virtual ICollection<Journal> Journals { get; set; }
@@ -41,17 +48,6 @@ namespace SchoolJournal.Models
         {
             return db.Teachers.Where(s => s.Login == login).FirstOrDefault();
         }
-        public static List<SelectListItem> GetFkTeachersSelectList(SchoolJournalContext db) 
-        {
-            var teachers = db.Teachers.Where(t => t.FireDate == null);
-            List<SelectListItem> fkTeachers = new List<SelectListItem>();
-            fkTeachers.Add(new SelectListItem { Value = "0", Text = "Оберіть вчителя" });
-            foreach (Teacher t in teachers)
-            {
-                fkTeachers.Add(new SelectListItem
-                { Value = t.Id.ToString(), Text = $"{t.Surname} {t.Name} {t.Middlename}" });
-            }
-            return fkTeachers;
-        }
+        
     }
 }

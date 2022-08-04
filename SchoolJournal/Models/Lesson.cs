@@ -28,7 +28,7 @@ namespace SchoolJournal.Models
         public static IQueryable<Lesson> GetLessonsForClass(SchoolJournalContext db, int classId, int schoolYearId, int subjectId, int teacherId)
         {
             return db.Lessons.Where(l => l.FkClass == classId && l.FkSchoolYear == schoolYearId
-                && l.FkSubject == subjectId && l.FkTeacher == teacherId);
+                && l.FkSubject == subjectId && l.FkTeacher == teacherId).OrderBy(l => l.LessonDate);
         }
         public static IQueryable<Lesson> GetLessonsForClass(SchoolJournalContext db, int classId, int schoolYearId)
         {

@@ -19,6 +19,8 @@ namespace SchoolJournal.Controllers
         {
             _db = db;
         }
+
+
         public IActionResult SubjectList() 
         {
             User user = JsonConvert.DeserializeObject<User>(HttpContext.Session.GetString("UserObject"));
@@ -33,15 +35,21 @@ namespace SchoolJournal.Controllers
         public IActionResult AcademicPerformance(string fkSubject, string fkTeacher)
         {
             User user = JsonConvert.DeserializeObject<User>(HttpContext.Session.GetString("UserObject"));
-            ViewBag.High = GetHighMarksCount(user, Convert.ToInt32(fkTeacher), Convert.ToInt32(fkSubject));
-            ViewBag.MidHigh = GetMidHighMarksCount(user, Convert.ToInt32(fkTeacher), Convert.ToInt32(fkSubject));
-            ViewBag.Mid = GetMidMarksCount(user, Convert.ToInt32(fkTeacher), Convert.ToInt32(fkSubject));
-            ViewBag.Low = GetLowMarksCount(user, Convert.ToInt32(fkTeacher), Convert.ToInt32(fkSubject));
-            ViewBag.Average = GetAverageMark(user, Convert.ToInt32(fkTeacher), Convert.ToInt32(fkSubject));
-            ViewBag.Eps = GetEpsCount(user, Convert.ToInt32(fkTeacher), Convert.ToInt32(fkSubject));
-            ViewBag.Student = user;
-            ViewBag.Subject = Subject.GetSubjectTitleById(_db, Convert.ToInt32(fkSubject));
+            SetViewBagForAcademicPerformance(user, Convert.ToInt32(fkSubject), Convert.ToInt32(fkTeacher));
             return View();
+        }
+
+
+        private void SetViewBagForAcademicPerformance(User user, int subjectId, int teacherId) 
+        {
+            ViewBag.High = GetHighMarksCount(user, teacherId, subjectId);
+            ViewBag.MidHigh = GetMidHighMarksCount(user, teacherId, subjectId);
+            ViewBag.Mid = GetMidMarksCount(user, teacherId, subjectId);
+            ViewBag.Low = GetLowMarksCount(user, teacherId, subjectId);
+            ViewBag.Average = GetAverageMark(user, teacherId, subjectId);
+            ViewBag.Eps = GetEpsCount(user, teacherId, subjectId);
+            ViewBag.Student = user;
+            ViewBag.Subject = _db.Subjects.Where(s => s.Id == subjectId).Select(s => s.Title).FirstOrDefault().ToString();
         }
         private int GetHighMarksCount(User user, int teacherId, int subjectId) 
         {

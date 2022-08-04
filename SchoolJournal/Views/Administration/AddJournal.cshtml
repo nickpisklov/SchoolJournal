@@ -5,23 +5,6 @@
     List<SelectListItem> fkClasses = ViewBag.FK_Classes;
     List<SelectListItem> fkSubjects = ViewBag.FK_Subjects;
     List<SelectListItem> fkTeachers = ViewBag.FK_Teachers;
-    List<SelectListItem> fkSchoolYears = ViewBag.FK_SchoolYears;
-}
-@if (ViewBag.Message == null)
-{
-
-}
-else if (ViewBag.Message == "Такий журнал вже існує!" || ViewBag.Message == "Ви повинні обрати всі поля!")
-{
-    <div class="text-center mb-3">
-        <b class="text-danger">@ViewBag.Message</b>
-    </div>
-}
-else
-{
-    <div class="text-center mb-3">
-        <b class="text-success">@ViewBag.Message</b>
-    </div>
 }
 <form method="post">
     <div class="row justify-content-center mt-3">
@@ -43,13 +26,6 @@ else
     </div>
     <div class="row justify-content-center">
         @Html.DropDownListFor(model => model.FkTeacher, fkTeachers, new { @class = "form-control col-sm-2 text-center" })
-    </div>
-
-    <div class="row justify-content-center mt-3">
-        <label asp-for="FkSchoolYear" class="mr-3">Оберіть навчальний рік</label>
-    </div>
-    <div class="row justify-content-center">
-        @Html.DropDownListFor(model => model.FkSchoolYear, fkSchoolYears, new { @class = "form-control col-sm-2 text-center" })
     </div>
 
     <div class="row justify-content-center mt-3">

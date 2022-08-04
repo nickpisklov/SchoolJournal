@@ -1,9 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using SchoolJournal.Models;
-using System.Linq;
 using Microsoft.AspNetCore.Http;
-using System;
 using Newtonsoft.Json;
 using SchoolJournal.ViewModels;
 
@@ -16,6 +13,21 @@ namespace SchoolJournal.Controllers
         public AuthorizationController(SchoolJournalContext db) 
         {
             _db = db;
+        }
+        private void SetSessionVariablesForAdmin(User user) 
+        {
+            HttpContext.Session.SetString("UserObject", JsonConvert.SerializeObject(user));
+            HttpContext.Session.SetString("Status", "Admin");
+        }
+        private void SetSessionVariablesForStudent(User user) 
+        {
+            HttpContext.Session.SetString("UserObject", JsonConvert.SerializeObject(user));
+            HttpContext.Session.SetString("Status", "Student");
+        }
+        private void SetSessionVariablesForTeacher(User user) 
+        {
+            HttpContext.Session.SetString("UserObject", JsonConvert.SerializeObject(user));
+            HttpContext.Session.SetString("Status", "Teacher");
         }
 
         [HttpGet]
@@ -31,22 +43,19 @@ namespace SchoolJournal.Controllers
             if (user.GetUserStatusByLoginAndPassword(_db) == Status.Teacher)
             {
                 user.SetTeacherPropertiesFromDB(Teacher.GetTeacherByLogin(_db, user.Login));
-                HttpContext.Session.SetString("UserObject", JsonConvert.SerializeObject(user));
-                HttpContext.Session.SetString("Status", "Teacher");
+                SetSessionVariablesForTeacher(user);
                 return RedirectToAction("Home", "Home");
             }
             else if (user.GetUserStatusByLoginAndPassword(_db) == Status.Student)
             {
                 user.SetStudentPropertiesFromDB(Student.GetStudentByLogin(_db, user.Login));
-                HttpContext.Session.SetString("UserObject", JsonConvert.SerializeObject(user));
-                HttpContext.Session.SetString("Status", "Student");
+                SetSessionVariablesForStudent(user);
                 return RedirectToAction("Home", "Home");
             }
             else if (user.GetUserStatusByLoginAndPassword(_db) == Status.Admin) 
             {
                 user.SetAdminPropertiesFromDB(Admin.GetAdminByLogin(_db, user.Login));
-                HttpContext.Session.SetString("UserObject", JsonConvert.SerializeObject(user));
-                HttpContext.Session.SetString("Status", "Admin");
+                SetSessionVariablesForAdmin(user);
                 return RedirectToAction("HomeAdministration", "Administration");
             }
             else

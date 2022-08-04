@@ -3,39 +3,47 @@
     Layout = "_MainLayout";
     ViewBag.Title = "Додати клас";
 }
+<link rel="stylesheet" href="/css/formValidationStyle.css" />
+@if (ViewBag.IsFormValid == true)
+{
+    <p class="text-center text-success mt-2">@ViewBag.Message</p>
+}
+else if (ViewBag.IsClassValid == false)
+{
+    <p class="text-center text-danger mt-2">@ViewBag.Message</p>
+}
+else
+{
+}
 <form method="post">
-    @if (ViewBag.Message == "Ви невірно ввели назву класу! Приклад назви: 2-Б" || ViewBag.Message == "Такий клас вже існує!")
-    {
-        <div class="text-center mb-3">
-            <b class="text-danger">@ViewBag.Message</b>
-        </div>
-    }
-    else if (ViewBag.Message == "Ви вдало додали клас!")
-    {
-        <div class="text-center mb-3">
-            <b class="text-success">@ViewBag.Message</b>
-        </div>
-    }
-    else if (ViewBag.Message == null) 
-    {
-
-    }
-    <div class="row justify-content-center mt-3">
-        <label asp-for="Title" class="mr-3">Назва класу</label>
+    <div class="row justify-content-center mt-3 mb-0">
+        <label asp-for="Title" class="mb-0">Назва класу</label>
     </div>
+    <div class="row justify-content-center mb-2 mt-0"><span class="text-danger" asp-validation-for="Title"></span></div>
     <div class="row justify-content-center">
-        <input asp-for="Title" class="form-control col-1" required />
+        <input asp-for="Title" class="form-control col-1" d />
     </div>
 
     <div class="row justify-content-center mt-3">
         <label asp-for="RecruitmentDate" class="mr-3">Дата набору</label>
     </div>
-    <div class="row justify-content-center">
-        <input asp-for="RecruitmentDate" class="form-control col-2" required />
-    </div>
+    @if (ViewBag.IsDateValid == false)
+    {
+        <p class="text-center text-danger mt-0 mb-2">@ViewBag.Message</p>
+        <div class="row justify-content-center">
+            <input asp-for="RecruitmentDate" class="form-control col-2" style="border: 1px solid #f00; background-color: #fee;" />
+        </div>
+    }
+    else
+    {
+        <div class="row justify-content-center mb-2 mt-0"><span class="text-danger" asp-validation-for="RecruitmentDate"></span></div>
+        <div class="row justify-content-center">
+            <input asp-for="RecruitmentDate" class="form-control col-2" />
+        </div>
+    }
 
     <div class="row justify-content-center mt-3">
-        <input asp-action="AddClass" type="submit" value="Додати клас" class="btn btn-dark text-center mr-3" />
-        <a asp-action="HomeAdministration" class="btn btn-dark text-center">Повернутись на сторінку адміністратора</a>
+        <input asp-action="AddClass" type="submit" value="Додати клас" class="btn mr-3" style="background-color: #152D35; color: #D4ECDD" />
+        <a asp-action="HomeAdministration" class="btn" style="background-color: #152D35; color: #D4ECDD">Повернутись на сторінку адміністратора</a>
     </div>
 </form>

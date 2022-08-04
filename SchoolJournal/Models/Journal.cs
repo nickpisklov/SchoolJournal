@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
 namespace SchoolJournal.Models
@@ -10,9 +11,13 @@ namespace SchoolJournal.Models
             Lessons = new HashSet<Lesson>();
         }
 
+        [RegularExpression("[^0]", ErrorMessage = "Будь ласка, оберіть вчителя!")]
         public int FkTeacher { get; set; }
+        [RegularExpression("[^0]", ErrorMessage = "Будь ласка, оберіть предмет!")]
         public int FkSubject { get; set; }
+        [RegularExpression("[^0]", ErrorMessage = "Будь ласка, оберіть клас!")]
         public int FkClass { get; set; }
+        [RegularExpression("[^0]", ErrorMessage = "Будь ласка, оберіть навчальний рік!")]
         public int FkSchoolYear { get; set; }
 
         public virtual Class FkClassNavigation { get; set; }
@@ -21,31 +26,7 @@ namespace SchoolJournal.Models
         public virtual Teacher FkTeacherNavigation { get; set; }
         public virtual ICollection<Lesson> Lessons { get; set; }
 
-        public void AddJournalWithDependencies(SchoolJournalContext db) 
-        {
-            var classDependencies = db.Classes.Find(FkClass);
-            classDependencies.Journals.Add(this);
-            var subjectDependencies = db.Subjects.Find(FkSubject);
-            subjectDependencies.Journals.Add(this);
-            var yearDependencies = db.SchoolYears.Find(FkSchoolYear);
-            yearDependencies.Journals.Add(this);
-            var teacherDependencies = db.Teachers.Find(FkTeacher);
-            teacherDependencies.Journals.Add(this);
-            db.Journals.Add(this);
-            db.SaveChanges();
-        }
-        public bool IsJournalExists(SchoolJournalContext db) 
-        {
-            var journal = db.Journals.Where(j => j.FkClass == FkClass && j.FkSchoolYear == FkSchoolYear
-            && j.FkSubject == FkSubject && j.FkTeacher == FkTeacher).FirstOrDefault();
-            if (journal == null)
-            {
-                return false;
-            }
-            else 
-            {
-                return true;
-            }
-        }
+        
+        
     }
 }
