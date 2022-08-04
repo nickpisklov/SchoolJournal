@@ -13,12 +13,12 @@
         @Html.HiddenFor(model => model.FkLessonTime)
         @Html.HiddenFor(model => model.LessonDate)
 
-        <label asp-for="Theme" for="Theme">Тема заняття</label>
-        <input asp-for="Theme" id="Theme" class="form-control col-5" required />
+        <label asp-for="Theme" for="Theme" style="color: #112031"><b>Тема заняття</b></label>
+        <input asp-for="Theme" id="Theme" class="form-control col-5"/>
 
-        <label asp-for="Homework" for="Homework">Домашнє завдвння</label>
-        <textarea asp-for="Homework" id="Homework" class="form-control col-5" required></textarea>
+        <label asp-for="Homework" for="Homework" style="color: #112031"><b>Домашнє завдвння</b></label>
+        <textarea asp-for="Homework" id="Homework" class="form-control col-5"></textarea>
 
-        <button type="submit" class="btn btn-dark text-center mt-md-3">Зберігти</button>
+        <button type="submit" class="btn text-center mt-md-3" style="background-color: #152D35; color: #D4ECDD;">Зберегти</button>
     </form>
 </div>

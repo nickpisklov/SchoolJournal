@@ -20,17 +20,5 @@ namespace SchoolJournal.Models
         {
             return db.Subjects.Where(s => s.Id == subjectId).Select(s => s.Title).FirstOrDefault().ToString();
         }
-        public  static List<SelectListItem> GetFkSubjectsSelectList(SchoolJournalContext db)
-        {
-            var subjects = db.Subjects;
-            List<SelectListItem> fkSubjects = new List<SelectListItem>();
-            fkSubjects.Add(new SelectListItem { Value = "0", Text = "Оберіть предмет" });
-            foreach (Subject s in subjects)
-            {
-                fkSubjects.Add(new SelectListItem
-                { Value = s.Id.ToString(), Text = s.Title });
-            }
-            return fkSubjects;
-        }
     }
 }

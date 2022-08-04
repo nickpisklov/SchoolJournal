@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using SchoolJournal.Models;
 using SchoolJournal.ViewModels;
 using System;
 using System.Collections.Generic;
-
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -105,8 +105,8 @@ namespace SchoolJournal.Controllers
         [HttpGet]
         public IActionResult AddLesson(string lessonDate, string fkTime)
         {
-            ViewBag.Teachers = Teacher.GetFkTeachersSelectList(_db);
-            ViewBag.Subjects = Subject.GetFkSubjectsSelectList(_db);
+            ViewBag.Teachers = GetFkTeachersSelectList();
+            ViewBag.Subjects = GetFkSubjectsSelectList();
             HttpContext.Session.SetString("NewLessonsDate", lessonDate);
             HttpContext.Session.SetString("NewLessonTime", fkTime);
             return View();
@@ -122,8 +122,8 @@ namespace SchoolJournal.Controllers
             if (newLesson.FkSubject.ToString() == "0" || newLesson.FkTeacher.ToString() == "0")
             {
                 ViewBag.Message = "Заповніть всі поля!";
-                ViewBag.Teachers = Teacher.GetFkTeachersSelectList(_db);
-                ViewBag.Subjects = Subject.GetFkSubjectsSelectList(_db);
+                ViewBag.Teachers = GetFkTeachersSelectList();
+                ViewBag.Subjects = GetFkSubjectsSelectList();
                 return View();
             }
             else if (_db.Journals.Where(j => j.FkClass == Convert.ToInt32(clas) 
@@ -131,8 +131,8 @@ namespace SchoolJournal.Controllers
                 .FirstOrDefault() == null) 
             {
                 ViewBag.Message = "У цього класу відсутній відповідний журнал!";
-                ViewBag.Teachers = Teacher.GetFkTeachersSelectList(_db);
-                ViewBag.Subjects = Subject.GetFkSubjectsSelectList(_db);
+                ViewBag.Teachers = GetFkTeachersSelectList();
+                ViewBag.Subjects = GetFkSubjectsSelectList();
                 return View();
             }
             else
@@ -144,8 +144,8 @@ namespace SchoolJournal.Controllers
         [HttpGet]
         public IActionResult EditLesson(string lessonId) 
         {
-            ViewBag.Teachers = Teacher.GetFkTeachersSelectList(_db);
-            ViewBag.Subjects = Subject.GetFkSubjectsSelectList(_db);
+            ViewBag.Teachers = GetFkTeachersSelectList();
+            ViewBag.Subjects = GetFkSubjectsSelectList();
             Lesson lesson = Lesson.GetLessonById(_db, Convert.ToInt32(lessonId));
             HttpContext.Session.SetString("oldLesson", JsonConvert.SerializeObject(lesson));
             return View(lesson);
@@ -158,20 +158,14 @@ namespace SchoolJournal.Controllers
             oldLesson.FkTeacher = editedLesson.FkTeacher;
             if (oldLesson.FkSubject.ToString()=="0" || oldLesson.FkTeacher.ToString()=="0")
             {
-                ViewBag.Message = "Заповніть всі поля!";
-                ViewBag.Teachers = Teacher.GetFkTeachersSelectList(_db);
-                ViewBag.Subjects = Subject.GetFkSubjectsSelectList(_db);
-                Lesson lesson = Lesson.GetLessonById(_db, Convert.ToInt32(oldLesson.Id));
-                HttpContext.Session.SetString("oldLesson", JsonConvert.SerializeObject(lesson));
-                return View(lesson);
+                SetViewBagDataForEditLesson("Заповніть всі поля!");
+                return View();
             }
             else if (_db.Journals.Where(j => j.FkClass == oldLesson.FkClass && j.FkSubject == oldLesson.FkSubject 
             && j.FkTeacher == oldLesson.FkTeacher && j.FkSchoolYear == oldLesson.FkSchoolYear)
                 .FirstOrDefault() == null)
             {
-                ViewBag.Message = "У цього класу відсутній відповідний журнал!";
-                ViewBag.Teachers = Teacher.GetFkTeachersSelectList(_db);
-                ViewBag.Subjects = Subject.GetFkSubjectsSelectList(_db);
+                SetViewBagDataForEditLesson("У цього класу відсутній відповідний журнал!");
                 return View();
             }
             else 
@@ -185,9 +179,10 @@ namespace SchoolJournal.Controllers
         public IActionResult DeleteLesson() 
         {
             Lesson lesson = JsonConvert.DeserializeObject<Lesson>(HttpContext.Session.GetString("oldLesson"));
-            if (_db.Progresses.Where(p => p.FkLesson == lesson.Id).FirstOrDefault() != null)
+            if (lesson.LessonDate >= DateTime.Now)
             {
-                ViewBag.Message = "Вчитель вже виставив відмітки за цей урок!";
+                ViewBag.Message = "Вчитель вже провів даний урок!";
+                SetViewBagDataForEditLesson();
                 return View();
             }
             else 
@@ -196,6 +191,42 @@ namespace SchoolJournal.Controllers
                 _db.SaveChanges();
                 return RedirectToRoute(new { action = "AdminSchedule", controller = "Schedule", pageNumber = HttpContext.Session.GetInt32("pageNumber") });
             }
+            
+        }
+        private List<SelectListItem> GetFkSubjectsSelectList()
+        {
+            var subjects = _db.Subjects;
+            List<SelectListItem> fkSubjects = new List<SelectListItem>();
+            fkSubjects.Add(new SelectListItem { Value = "0", Text = "Оберіть предмет" });
+            foreach (Subject s in subjects)
+            {
+                fkSubjects.Add(new SelectListItem
+                { Value = s.Id.ToString(), Text = s.Title });
+            }
+            return fkSubjects;
+        }
+        private List<SelectListItem> GetFkTeachersSelectList()
+        {
+            var teachers = _db.Teachers.Where(t => t.FireDate == null);
+            List<SelectListItem> fkTeachers = new List<SelectListItem>();
+            fkTeachers.Add(new SelectListItem { Value = "0", Text = "Оберіть вчителя" });
+            foreach (Teacher t in teachers)
+            {
+                fkTeachers.Add(new SelectListItem
+                { Value = t.Id.ToString(), Text = $"{t.Surname} {t.Name} {t.Middlename}" });
+            }
+            return fkTeachers;
+        }
+        private void SetViewBagDataForEditLesson(string message) 
+        {
+            ViewBag.Message = message;
+            ViewBag.Teachers = GetFkTeachersSelectList();
+            ViewBag.Subjects = GetFkSubjectsSelectList();
+        }
+        private void SetViewBagDataForEditLesson() 
+        {
+            ViewBag.Teachers = GetFkTeachersSelectList();
+            ViewBag.Subjects = GetFkSubjectsSelectList();
         }
     }
 }

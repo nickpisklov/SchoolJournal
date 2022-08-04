@@ -4,68 +4,76 @@
     ViewBag.Title = "Додати вчителя";
     List<SelectListItem> fkClasses = ViewBag.ClassesSelect;
 }
-@if (ViewBag.Message == null)
+<link rel="stylesheet" href="/css/formValidationStyle.css" />
+@if (ViewBag.IsFormValid == true)
 {
-
-}
-else if (ViewBag.Message == "Невірна дата прийому на роботу! Дата повинна бути менша за теперешню." || ViewBag.Message == "Такий логін вже існує!")
-{
-    <div class="text-center mb-3">
-        <b class="text-danger">@ViewBag.Message</b>
-    </div>
+    <p class="text-center text-success mt-2">@ViewBag.Message</p>
 }
 else
 {
-    <div class="text-center mb-3">
-        <b class="text-success">@ViewBag.Message</b>
-    </div>
 }
 <form method="post">
-    <div class="row justify-content-center mt-3">
-        <label asp-for="Login" class="mr-3">Логін</label>
+    <div class="row justify-content-center mt-3 mb-0">
+        <label asp-for="Login" class="mb-0">Логін</label>
     </div>
+    @if (ViewBag.IsFormValid == false)
+    {
+        <div class="row justify-content-center mb-2 mt-0"><span class="text-danger">@ViewBag.Message</span></div>
+        <div class="row justify-content-center">
+            <input asp-for="Login" class="form-control col-3" style="border: 1px solid #f00; background-color: #fee;" />
+        </div>
+    }
+    else
+    {
+        <div class="row justify-content-center mb-2 mt-0"><span class="text-danger" asp-validation-for="Login"></span></div>
+        <div class="row justify-content-center">
+            <input asp-for="Login" class="form-control col-3" />
+        </div>
+    }
+
+    <div class="row justify-content-center mt-3 mb-0">
+        <label asp-for="Password" class="mb-0">Пароль</label>
+    </div>
+    <div class="row justify-content-center mb-2 mt-0"><span class="text-danger" asp-validation-for="Password"></span></div>
     <div class="row justify-content-center">
-        <input asp-for="Login" class="form-control col-3" required />
+        <input asp-for="Password" class="form-control col-3" />
+    </div>
+
+    <div class="row justify-content-center mt-3 mb-0">
+        <label asp-for="Surname" class="mb-0">Прізвище</label>
+    </div>
+    <div class="row justify-content-center mb-2 mt-0"><span class="text-danger" asp-validation-for="Surname"></span></div>
+    <div class="row justify-content-center">
+        <input asp-for="Surname" class="form-control col-3" />
+    </div>
+
+    <div class="row justify-content-center mt-3 mb-0">
+        <label asp-for="Name" class="mb-0">Ім'я</label>
+    </div>
+    <div class="row justify-content-center mb-2 mt-0"><span class="text-danger" asp-validation-for="Name"></span></div>
+    <div class="row justify-content-center">
+        <input asp-for="Name" class="form-control col-3" />
+    </div>
+
+    <div class="row justify-content-center mt-3 mb-0">
+        <label asp-for="Middlename" class="mb-0">По батькові</label>
+    </div>
+    <div class="row justify-content-center mb-2 mt-0"><span class="text-danger" asp-validation-for="Middlename"></span></div>
+    <div class="row justify-content-center">
+        <input asp-for="Middlename" class="form-control col-3" />
+    </div>
+
+    <div class="row justify-content-center mt-3 mb-0">
+        <label asp-for="HireDate" class="mb-0">Дата найму</label>
+    </div>
+    <div class="row justify-content-center mb-2 mt-0"><span class="text-danger" asp-validation-for="HireDate"></span></div>
+    <div class="row justify-content-center">
+        <input asp-for="HireDate" class="form-control col-2" />
     </div>
 
     <div class="row justify-content-center mt-3">
-        <label asp-for="Password" class="mr-3">Пароль</label>
-    </div>
-    <div class="row justify-content-center">
-        <input asp-for="Password" class="form-control col-3" required />
-    </div>
-
-    <div class="row justify-content-center mt-3">
-        <label asp-for="Surname" class="mr-3">Прізвище</label>
-    </div>
-    <div class="row justify-content-center">
-        <input asp-for="Surname" class="form-control col-3" required />
-    </div>
-
-    <div class="row justify-content-center mt-3">
-        <label asp-for="Name" class="mr-3">Ім'я</label>
-    </div>
-    <div class="row justify-content-center">
-        <input asp-for="Name" class="form-control col-3" required />
-    </div>
-
-    <div class="row justify-content-center mt-3">
-        <label asp-for="Middlename" class="mr-3">По батькові</label>
-    </div>
-    <div class="row justify-content-center">
-        <input asp-for="Middlename" class="form-control col-3" required />
-    </div>
-
-    <div class="row justify-content-center mt-3">
-        <label asp-for="HireDate" class="mr-3">Дата найму</label>
-    </div>
-    <div class="row justify-content-center">
-        <input asp-for="HireDate" class="form-control col-2" required />
-    </div>
-
-    <div class="row justify-content-center mt-3">
-        <input asp-action="AddTeacher" type="submit" value="Додати вчителя" class="btn btn-dark text-center mr-3" />
-        <a asp-action="HomeAdministration" class="btn btn-dark text-center">Повернутись на сторінку адміністратора</a>
+        <input asp-action="AddTeacher" type="submit" value="Додати вчителя" class="btn mr-3" style="background-color: #152D35; color: #D4ECDD" />
+        <a asp-action="HomeAdministration" class="btn" style="background-color: #152D35; color: #D4ECDD">Повернутись на сторінку адміністратора</a>
     </div>
 </form>
 

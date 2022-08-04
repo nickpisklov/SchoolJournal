@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
 namespace SchoolJournal.Models
@@ -11,12 +12,20 @@ namespace SchoolJournal.Models
         }
 
         public int Id { get; set; }
+        [RegularExpression("[^0]", ErrorMessage = "Будь ласка, оберіть клас!")]
         public int FkClass { get; set; }
+        [Required(ErrorMessage = "Будь ласка, введіть логін учня!")]
         public string Login { get; set; }
+        [Required(ErrorMessage = "Будь ласка, введіть пароль учня!")]
         public string Password { get; set; }
+        [Required(ErrorMessage = "Будь ласка, введіть ім'я учня!")]
         public string Name { get; set; }
+        [Required(ErrorMessage = "Будь ласка, введіть прізвище учня!")]
         public string Surname { get; set; }
+        [Required(ErrorMessage = "Будь ласка, введіть по-батькові учня!")]
         public string Middlename { get; set; }
+        [Required(ErrorMessage = "Будь ласка, введіть email адресу одного з батьків!")]
+        [RegularExpression(@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$", ErrorMessage = "Email адреса введена неправильно!")]
         public string ParrentMail { get; set; }
 
         public virtual Class FkClassNavigation { get; set; }
@@ -33,20 +42,7 @@ namespace SchoolJournal.Models
             db.Students.Add(this);
             db.SaveChanges();
         }
-        public bool IsLoginEcxist(SchoolJournalContext db) 
-        {
-            var t = db.Teachers.Where(t => t.Login == Login).FirstOrDefault();
-            var s = db.Students.Where(s => s.Login == Login).FirstOrDefault();
-            var a = db.Admins.Where(a => a.Login == Login).FirstOrDefault();
-            if (t == null && s == null && a == null)
-            {
-                return false;
-            }
-            else 
-            {
-                return true;
-            }
-        }
+
         public static Student GetStudentById(SchoolJournalContext db, int id)
         {
             return db.Students.Where(s => s.Id == id).FirstOrDefault();

@@ -3,16 +3,16 @@
     Layout = "_MainLayout";
     ViewBag.Title = "Авторизація";
 }
-    <div class="text-center">
+    <div class="text-center mt-0">
         <form method="post">
-            <h3 class="mt-2 mb-3">Введіть ваші дані</h3>
+            <h3 class="pt-2 mb-3 text-dark">Введіть ваші дані</h3>
             @if (ViewBag.IsGuest == null)
             {
 
             }
             else if (ViewBag.IsGuest == true)
             {
-                <p class="text-danger"><b>Невірний логін або пароль!</b></p>
+                <p class="text-danger pb-2"><b>Невірний логін або пароль!</b></p>
             }
             <div>
                 <div class="row justify-content-center">
@@ -25,7 +25,7 @@
                     <input asp-for="Password" id="inputPassword" class="form-control col-3" type="password" placeholder="Пароль" required />
                 </div>
                 <p></p>
-                <button type="submit" class="btn btn-dark text-center">Увійти</button>
+                <button type="submit" class="btn text-center" style="background-color: #152D35; color: #D4ECDD; ">Увійти</button>
             </div>
         </form>
     </div>

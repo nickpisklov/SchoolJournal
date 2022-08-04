@@ -7,10 +7,10 @@
     List<LessonTime> times = ViewBag.LessonTime;
 }
 @{string month = CultureInfo.GetCultureInfo("uk-UA").DateTimeFormat.GetMonthName(Model[0].Month); }
-<h4 class="mt-2 ml-3 text-center">@char.ToUpper(month[0])@month.Substring(1) @Model[0].ToString("yyyy")</h4>
-<table class="table table-bordered mt-3">
-    <thead>
-        <tr class="thead-light">
+<h4 class="mt-2 ml-3 text-center" style="color: #112031">@char.ToUpper(month[0])@month.Substring(1) @Model[0].ToString("yyyy")</h4>
+<table class="table table-bordered border-dark mt-3">
+    <thead style="background-color: #D4ECDD; color: #152D35">
+        <tr>
             <th></th>
             @foreach (DateTime day in Model)
             {
@@ -89,29 +89,29 @@
 {
     <a asp-action="ClassSchedule"
        asp-route-pageNumber="@(Model.PageIndex - 1)"
-       class="btn btn-dark btn-sm @prevDisabled">Попередня сторінка</a>
+       class="btn btn-sm @prevDisabled mb-3" style="background-color: #152D35; color: #D4ECDD;">Попередня сторінка</a>
 
     <a asp-action="ClassSchedule"
        asp-route-pageNumber="@(Model.PageIndex + 1)"
-       class="btn btn-dark btn-sm @nextDisabled">Наступна сторінка</a>
+       class="btn btn-sm @nextDisabled mb-3" style="background-color: #152D35; color: #D4ECDD;">Наступна сторінка</a>
 }
 else if (Context.Session.GetString("Status") == "Teacher")
 {
     <a asp-action="TeacherSchedule"
        asp-route-pageNumber="@(Model.PageIndex - 1)"
-       class="btn btn-dark btn-sm @prevDisabled">Попередня сторінка</a>
+       class="btn btn-sm @prevDisabled mb-3" style="background-color: #152D35; color: #D4ECDD;">Попередня сторінка</a>
 
     <a asp-action="TeacherSchedule"
        asp-route-pageNumber="@(Model.PageIndex + 1)"
-       class="btn btn-dark btn-sm @nextDisabled">Наступна сторінка</a>
+       class="btn btn-sm @nextDisabled mb-3" style="background-color: #152D35; color: #D4ECDD;">Наступна сторінка</a>
 }
 else if (Context.Session.GetString("Status") == "Admin")
 {
     <a asp-action="AdminSchedule"
        asp-route-pageNumber="@(Model.PageIndex - 1)"
-       class="btn btn-dark btn-sm @prevDisabled">Попередня сторінка</a>
+       class="btn btn-sm @prevDisabled mb-3" style="background-color: #152D35; color: #D4ECDD;">Попередня сторінка</a>
 
     <a asp-action="AdminSchedule"
        asp-route-pageNumber="@(Model.PageIndex + 1)"
-       class="btn btn-dark btn-sm @nextDisabled">Наступна сторінка</a>
+       class="btn btn-sm @nextDisabled mb-3" style="background-color: #152D35; color: #D4ECDD;">Наступна сторінка</a>
 }

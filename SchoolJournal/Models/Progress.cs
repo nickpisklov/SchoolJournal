@@ -23,10 +23,6 @@ namespace SchoolJournal.Models
         }
         public Progress() { }
 
-        public static Progress GetProgressByStudentAndLessonId(SchoolJournalContext db, int studentId, int lessonId) 
-        {
-            return db.Progresses.Where(p => p.FkLesson == lessonId && p.FkStudent == studentId).FirstOrDefault();
-        }
         public void AddToDbWithDependencies(SchoolJournalContext db, Progress progress) 
         {
             var student = db.Students.Find(progress.FkStudent);
@@ -36,7 +32,7 @@ namespace SchoolJournal.Models
             db.Progresses.Add(progress);
             db.SaveChanges();
         }
-        public void ModifyDbRecord(SchoolJournalContext db, Progress progress, Progress progressCheck) 
+        public void ReplaceDbRecord(SchoolJournalContext db, Progress progress, Progress progressCheck) 
         {
             db.Progresses.Remove(progressCheck);
             db.SaveChanges();
